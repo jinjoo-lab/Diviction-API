@@ -1,0 +1,21 @@
+version: "3"
+
+services:
+  db:
+    image: mariadb:latest
+    ports:
+      - 3306:3306
+    volumes:
+      - ./db/initdb:/docker-entrypoint-initdb.d
+    environment:
+      TZ: Asia/Seoul
+      MYSQL_HOST: mariadb
+      MYSQL_USER: root
+      MYSQL_PASSWORD: jinjooone123
+      MYSQL_ROOT_PASSWORD: jinjooone123!
+      MYSQL_DB: toy
+    networks:
+      - backend
+    restart: always
+networks:
+  backend:
