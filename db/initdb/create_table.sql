@@ -20,3 +20,12 @@ create table diviction.counselor(
     profile_img_url VARCHAR(256) NOT NULL,
     confirm BOOLEAN
 );
+create table diviction.matching(
+    id BIGINT AUTO_INCREMENT PRIMARY KEY ,
+    patient_id BIGINT NOT NULL,
+    counselor_id BIGINT NOT NULL ,
+    state VARCHAR(32) NOT NULL ,
+    FOREIGN KEY(patient_id) REFERENCES diviction.member(id),
+    FOREIGN KEY(counselor_id) REFERENCES diviction.counselor(id)
+);
+
