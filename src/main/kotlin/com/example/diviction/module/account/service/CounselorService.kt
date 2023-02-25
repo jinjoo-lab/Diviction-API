@@ -95,6 +95,11 @@ class CounselorService(private val counselorRepository: CounselorRepository) {
         }
     }
 
+    fun deleteCounselor(id : Long)
+    {
+        counselorRepository.deleteById(id)
+    }
+
     fun Counselor.toDto() : CounselorDto = CounselorDto(
         email, password, name, birth, address, gender, profile_img_url, confirm
     )

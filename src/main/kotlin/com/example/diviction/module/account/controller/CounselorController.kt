@@ -37,4 +37,10 @@ class CounselorController(private val counselorService: CounselorService) {
     {
         counselorService.saveCounselor(counselorDto)
     }
+
+    @GetMapping("/delete/{id}")
+    fun deleteCounselor(@PathVariable id :Long)
+    {
+        counselorService.deleteCounselor(id)
+    }
 }

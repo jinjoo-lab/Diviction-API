@@ -2,12 +2,14 @@ package com.example.diviction.module.account.entity
 
 import com.example.diviction.module.constant.Gender
 import lombok.Getter
+import lombok.ToString
 import javax.persistence.*
 import javax.validation.constraints.Email
 import javax.validation.constraints.NotBlank
 
 @Entity
 @Getter
+@ToString
 class Counselor(
     @Email
     @NotBlank

@@ -2,6 +2,7 @@ package com.example.diviction.module.account.entity
 
 import com.example.diviction.module.constant.Gender
 import lombok.Getter
+import lombok.ToString
 import org.springframework.validation.annotation.Validated
 import javax.persistence.*
 import javax.validation.Valid
@@ -10,6 +11,7 @@ import javax.validation.constraints.NotBlank
 
 @Entity
 @Getter
+@ToString
 class Member (
     @Email
     @NotBlank
