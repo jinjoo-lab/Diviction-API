@@ -7,6 +7,21 @@ import org.springframework.stereotype.Service
 
 @Service
 class MemberService(private val memberRepository: MemberRepository){
+    fun getMember(email : String) : MemberDto
+    {
+        val cur = memberRepository.findByEmail(email)
+
+        if(cur.isPresent)
+        {
+            val member = cur.get()
+
+            return member.toDto()
+        }
+        else{
+            throw RuntimeException("해당 이메일의 사용자는 존재하지 않습니다.")
+        }
+    }
+
     fun getMember(userId : Long) : MemberDto
     {
         val cur = memberRepository.findById(userId)
@@ -18,12 +33,17 @@ class MemberService(private val memberRepository: MemberRepository){
             return member.toDto()
         }
         else{
-            throw RuntimeException()
+            throw RuntimeException("해당 Id의 사용자는 존재하지 않습니다.")
         }
     }
 
     fun saveMember(memberDto: MemberDto)
     {
+        if(memberRepository.findByEmail(memberDto.email).isPresent)
+        {
+            throw RuntimeException("해당 이메일의 사용자는 이미 존재합니다.")
+        }
+
         val member : Member = Member(
             email = memberDto.email,
             password = memberDto.password,
