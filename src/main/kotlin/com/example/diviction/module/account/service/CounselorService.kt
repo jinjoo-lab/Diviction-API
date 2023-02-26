@@ -1,8 +1,10 @@
 package com.example.diviction.module.account.service
 
 import com.example.diviction.module.account.dto.CounselorDto
+import com.example.diviction.module.account.dto.MatchResponseDto
 import com.example.diviction.module.account.entity.Counselor
 import com.example.diviction.module.account.repository.CounselorRepository
+import com.fasterxml.jackson.databind.RuntimeJsonMappingException
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 
@@ -92,6 +94,33 @@ class CounselorService(private val counselorRepository: CounselorRepository) {
             counselor.confirm = true
 
             counselorRepository.save(counselor)
+        }
+    }
+
+    fun deleteCounselor(id : Long)
+    {
+        counselorRepository.deleteById(id)
+    }
+
+    fun getMatchListById(id : Long) : List<MatchResponseDto>
+    {
+        var cur = counselorRepository.findById(id)
+
+        var re_list = ArrayList<MatchResponseDto>()
+        if(cur.isPresent)
+        {
+            var counselor = cur.get()
+
+            var list = counselor.matching_list
+
+            list.forEach {
+               re_list.add(MatchResponseDto(counselorEmail = it.counselor.email, patientEmail = it.patient.email))
+            }
+
+            return re_list
+        }
+        else{
+            throw RuntimeException()
         }
     }
 

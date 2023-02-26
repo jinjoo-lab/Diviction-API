@@ -1,6 +1,9 @@
 package com.example.diviction.module.account.service
 
+import com.example.diviction.module.account.dto.MatchDto
+import com.example.diviction.module.account.dto.MatchResponseDto
 import com.example.diviction.module.account.dto.MemberDto
+import com.example.diviction.module.account.entity.Matching
 import com.example.diviction.module.account.entity.Member
 import com.example.diviction.module.account.repository.MemberRepository
 import org.springframework.stereotype.Service
@@ -57,6 +60,28 @@ class MemberService(private val memberRepository: MemberRepository){
         memberRepository.save(member)
     }
 
+    fun getMatchById(id : Long) : MatchResponseDto
+    {
+        var cur = memberRepository.findById(id)
+
+        if(cur.isPresent)
+        {
+            var member = cur.get()
+            var match =  member.matching
+
+            if(match!=null)
+            {
+                return MatchResponseDto(counselorEmail = match.counselor.email, patientEmail = match.patient.email)
+            }
+        }
+
+        throw RuntimeException()
+    }
+
+    fun deleteMember(id : Long)
+    {
+        memberRepository.deleteById(id)
+    }
 
     fun Member.toDto() : MemberDto = MemberDto(
         email, password, name, birth, address, gender, profile_img_url
