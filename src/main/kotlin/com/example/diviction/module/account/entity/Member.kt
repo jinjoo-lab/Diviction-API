@@ -1,6 +1,7 @@
 package com.example.diviction.module.account.entity
 
 import com.example.diviction.module.constant.Gender
+import com.example.diviction.module.diagnosis.entity.DiagnosisResult
 import lombok.Getter
 import lombok.ToString
 import org.springframework.validation.annotation.Validated
@@ -35,4 +36,7 @@ class Member (
 
     @OneToOne(mappedBy = "patient", cascade = [CascadeType.REMOVE], orphanRemoval = true)
     var matching : Matching? = null
+
+    @OneToMany(mappedBy = "member", cascade = [CascadeType.REMOVE], orphanRemoval = true)
+    var diagnosisList : MutableList<DiagnosisResult> = mutableListOf()
 }

@@ -8,4 +8,6 @@ interface MemberRepository : JpaRepository<Member,Long> {
     override fun findById(id: Long): Optional<Member>
 
     fun findByEmail(email : String) : Optional<Member>
+
+    fun getByEmail(email : String) : Member
 }

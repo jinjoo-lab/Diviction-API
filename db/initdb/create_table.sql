@@ -28,4 +28,12 @@ create table diviction.matching(
     FOREIGN KEY(patient_id) REFERENCES diviction.member(id),
     FOREIGN KEY(counselor_id) REFERENCES diviction.counselor(id)
 );
-
+create table diviction.diagnosis_result(
+    id BIGINT AUTO_INCREMENT PRIMARY KEY ,
+    user_id BIGINT NOT NULL ,
+    FOREIGN KEY(user_id) REFERENCES diviction.member(id),
+    date VARCHAR(32) NOT NULL ,
+    vP1 BIGINT NOT NULL ,
+    vP2 BIGINT NOT NULL ,
+    vP3 BIGINT NOT NULL
+);
