@@ -1,6 +1,7 @@
 package com.example.diviction.module.account.service
 
 import com.example.diviction.module.account.dto.MatchDto
+import com.example.diviction.module.account.dto.MatchResponseDto
 import com.example.diviction.module.account.entity.Matching
 import com.example.diviction.module.account.entity.Member
 import com.example.diviction.module.account.repository.CounselorRepository
@@ -17,9 +18,9 @@ class MatchService(
     @Autowired private val matchRepository: MatchRepository
 ) {
 
-    fun patientDuplication(patient : Member) : Boolean
+    fun patientDuplication(id : Long) : Boolean
     {
-        return false
+        return matchRepository.existsByPatient(memberRepository.getById(id))
     }
 
 
@@ -32,16 +33,34 @@ class MatchService(
         if(curPatient.isPresent&&curCounselor.isPresent)
         {
             var patient = curPatient.get()
-            println(patient)
             var counselor = curCounselor.get()
-            println(counselor)
-            if(patientDuplication(patient))
+
+            if(patientDuplication(patient.id!!))
             {
                 throw RuntimeException()
             }
             else{
-                matchRepository.save(Matching(patient = patient,counselor = counselor))
+                var match : Matching = Matching(patient = patient,counselor = counselor)
+                patient.matching = match
+                counselor.matching_list.add(match)
+                matchRepository.save(match)
             }
+        }
+
+        else{
+            throw RuntimeException()
+        }
+    }
+
+    fun getMatchByMatchingId(id :Long) : MatchResponseDto
+    {
+        var cur = matchRepository.findById(id)
+
+        if(cur.isPresent)
+        {
+            var match = cur.get()
+
+            return MatchResponseDto(counselorEmail = match.counselor.email, patientEmail = match.patient.email)
         }
 
         else{

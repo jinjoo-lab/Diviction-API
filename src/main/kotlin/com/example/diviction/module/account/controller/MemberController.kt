@@ -1,6 +1,9 @@
 package com.example.diviction.module.account.controller
 
+import com.example.diviction.module.account.dto.MatchDto
+import com.example.diviction.module.account.dto.MatchResponseDto
 import com.example.diviction.module.account.dto.MemberDto
+import com.example.diviction.module.account.entity.Matching
 import com.example.diviction.module.account.service.MemberService
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
@@ -25,5 +28,16 @@ class MemberController (private val memberService: MemberService){
     fun saveMember(@RequestBody memberDto: MemberDto)
     {
         memberService.saveMember(memberDto)
+    }
+
+    @GetMapping("/match/{id}")
+    fun getMatchById(@PathVariable id : Long) : MatchResponseDto
+    {
+        return  memberService.getMatchById(id)
+    }
+
+    @GetMapping("/delete/{id}")
+    fun deleteMember(@PathVariable id : Long){
+        memberService.deleteMember(id)
     }
 }

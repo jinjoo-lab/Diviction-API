@@ -9,21 +9,22 @@ import javax.persistence.*
 @Entity
 @Getter
 class Matching(
-    @ManyToOne()
+    @OneToOne()
     @JoinColumn(nullable = false,name = "patient_id")
-    @OnDelete(action = OnDeleteAction.CASCADE)
     var patient : Member,
 
     @ManyToOne()
     @JoinColumn(nullable = false,name = "counselor_id")
-    @OnDelete(action = OnDeleteAction.CASCADE)
     var counselor : Counselor
 
 ) {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     val id : Long? = null
 
     @Enumerated(value = EnumType.STRING)
     var state : MatchState = MatchState.KEEP
+
+
 }

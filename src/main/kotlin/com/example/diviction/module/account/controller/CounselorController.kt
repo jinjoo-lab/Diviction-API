@@ -1,6 +1,7 @@
 package com.example.diviction.module.account.controller
 
 import com.example.diviction.module.account.dto.CounselorDto
+import com.example.diviction.module.account.dto.MatchResponseDto
 import com.example.diviction.module.account.service.CounselorService
 import org.springframework.web.bind.annotation.*
 
@@ -42,5 +43,10 @@ class CounselorController(private val counselorService: CounselorService) {
     fun deleteCounselor(@PathVariable id :Long)
     {
         counselorService.deleteCounselor(id)
+    }
+    @GetMapping("match/list/{id}")
+    fun getMatchListById(id :Long) : List<MatchResponseDto>
+    {
+        return counselorService.getMatchListById(id)
     }
 }

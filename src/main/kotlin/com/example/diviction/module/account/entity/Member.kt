@@ -32,4 +32,7 @@ class Member (
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     val id : Long? = null
+
+    @OneToOne(mappedBy = "patient", cascade = [CascadeType.REMOVE], orphanRemoval = true)
+    var matching : Matching? = null
 }

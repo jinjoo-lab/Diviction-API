@@ -37,4 +37,6 @@ class Counselor(
             field = value
         }
 
+    @OneToMany(mappedBy = "counselor", cascade = [CascadeType.REMOVE], orphanRemoval = true)
+    var matching_list : MutableList<Matching> =  mutableListOf()
 }
