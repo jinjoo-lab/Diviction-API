@@ -9,11 +9,11 @@ import javax.persistence.*
 @Entity
 @Getter
 class Matching(
-    @OneToOne()
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(nullable = false,name = "patient_id")
     var patient : Member,
 
-    @ManyToOne()
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(nullable = false,name = "counselor_id")
     var counselor : Counselor
 

@@ -12,7 +12,7 @@ import javax.validation.constraints.Pattern
 @Getter
 @Table(name = "diagnosis_result")
 class DiagnosisResult(
-    @ManyToOne()
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
     val member : Member,
 

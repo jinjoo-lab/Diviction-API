@@ -40,12 +40,12 @@ class Member (
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     val id : Long? = null
 
-    @OneToOne(mappedBy = "patient", cascade = [CascadeType.REMOVE], orphanRemoval = true)
+    @OneToOne(mappedBy = "patient" ,cascade = [CascadeType.REMOVE], orphanRemoval = true)
     var matching : Matching? = null
 
     @OneToMany(mappedBy = "member", cascade = [CascadeType.REMOVE], orphanRemoval = true)
     var diagnosisList : MutableList<DiagnosisResult> = mutableListOf()
 
-    @OneToMany(mappedBy = "consultPatient", targetEntity = Consulting::class, cascade = [CascadeType.REMOVE], orphanRemoval = true)
+    @OneToMany(mappedBy = "consultPatient" , targetEntity = Consulting::class, cascade = [CascadeType.REMOVE], orphanRemoval = true)
     var consultingList : MutableList<Consulting> = mutableListOf()
 }
