@@ -2,6 +2,7 @@ package com.example.diviction.module.diagnosis.entity
 
 import com.example.diviction.module.account.entity.Member
 import lombok.Getter
+import org.springframework.format.annotation.DateTimeFormat
 
 import javax.persistence.*
 import javax.validation.constraints.NotBlank
@@ -16,7 +17,7 @@ class DiagnosisResult(
     val member : Member,
 
     @NotBlank
-    @Pattern(regexp = "^([12]\\d{3}-(0[1-9]|1[0-2])-(0[1-9]|[12]\\d|3[01]))$")
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
     val date : String,
 
     @NotBlank

@@ -37,3 +37,12 @@ create table diviction.diagnosis_result(
     vP2 BIGINT NOT NULL ,
     vP3 BIGINT NOT NULL
 );
+create table diviction.consulting(
+    id BIGINT AUTO_INCREMENT PRIMARY KEY ,
+    patient_id BIGINT NOT NULL ,
+    foreign key(patient_id) REFERENCES diviction.member(id),
+    counselor_id BIGINT NOT NULL ,
+    foreign key (counselor_id) REFERENCES diviction.counselor(id),
+    content VARCHAR(2048) NOT NULL ,
+    date VARCHAR(32) NOT NULL
+);

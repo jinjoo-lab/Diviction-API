@@ -3,6 +3,7 @@ package com.example.diviction.module.account.entity
 import com.example.diviction.module.constant.Gender
 import lombok.Getter
 import lombok.ToString
+import org.springframework.format.annotation.DateTimeFormat
 import javax.persistence.*
 import javax.validation.constraints.Email
 import javax.validation.constraints.NotBlank
@@ -19,6 +20,7 @@ class Counselor(
     @NotBlank
     var name : String,
     @NotBlank
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
     var birth : String,
     @NotBlank
     var address : String,
