@@ -1,33 +1,39 @@
 package com.example.diviction.module.account.entity
 
 import com.example.diviction.module.constant.Gender
+import com.example.diviction.module.consulting.dto.ConsultResponseDto
+import com.example.diviction.module.consulting.entity.Consulting
 import com.example.diviction.module.diagnosis.entity.DiagnosisResult
 import lombok.Getter
 import lombok.ToString
+import org.springframework.format.annotation.DateTimeFormat
 import org.springframework.validation.annotation.Validated
 import javax.persistence.*
 import javax.validation.Valid
 import javax.validation.constraints.Email
 import javax.validation.constraints.NotBlank
+import javax.validation.constraints.Pattern
 
 @Entity
 @Getter
 @ToString
 class Member (
-    @Email
-    @NotBlank
+    @field: Email
+    @field: NotBlank
     var email : String,
-    @NotBlank
+    @field: NotBlank
     var password : String,
-    @NotBlank
+    @field: NotBlank
     var name : String,
-    @NotBlank
+
+    @field: NotBlank
+    @field: Pattern(regexp = "^([12]\\d{3}-(0[1-9]|1[0-2])-(0[1-9]|[12]\\d|3[01]))$")
     var birth : String,
-    @NotBlank
+    @field: NotBlank
     var address : String,
     @Enumerated(EnumType.STRING)
     var gender : Gender,
-    @NotBlank
+    @field: NotBlank
     var profile_img_url : String
     ){
     @Id
@@ -39,4 +45,7 @@ class Member (
 
     @OneToMany(mappedBy = "member", cascade = [CascadeType.REMOVE], orphanRemoval = true)
     var diagnosisList : MutableList<DiagnosisResult> = mutableListOf()
+
+    @OneToMany(mappedBy = "consultPatient", targetEntity = Consulting::class, cascade = [CascadeType.REMOVE], orphanRemoval = true)
+    var consultingList : MutableList<Consulting> = mutableListOf()
 }
