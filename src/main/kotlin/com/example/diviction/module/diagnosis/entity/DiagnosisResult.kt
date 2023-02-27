@@ -16,15 +16,15 @@ class DiagnosisResult(
     @JoinColumn(name = "user_id", nullable = false)
     val member : Member,
 
-    @NotBlank
-    @DateTimeFormat(pattern = "yyyy-MM-dd")
+    @field: NotBlank
+    @field: Pattern(regexp = "^([12]\\d{3}-(0[1-9]|1[0-2])-(0[1-9]|[12]\\d|3[01]))$")
     val date : String,
 
-    @NotBlank
+    @field: NotBlank
     val vP1 : Long,
-    @NotBlank
+    @field: NotBlank
     val vP2 : Long,
-    @NotBlank
+    @field: NotBlank
     val vP3 : Long
 ){
     @Id

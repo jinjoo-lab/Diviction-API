@@ -22,9 +22,13 @@ class ConsultingService(
         val patient = memberRepository.getById(consultingRequestDto.patient_id)
         val counselor = counselorRepository.getById(consultingRequestDto.conuselor_id)
 
-        consultingRepository.save(Consulting(
+        val consultLog = Consulting(
             patient,counselor,consultingRequestDto.content,consultingRequestDto.date
-        ))
+        )
+        patient.consultingList.add(consultLog)
+        counselor.consultingList.add(consultLog)
+        consultingRepository.save(consultLog)
+
     }
 
     fun Consulting.toResponseDto() = ConsultResponseDto(

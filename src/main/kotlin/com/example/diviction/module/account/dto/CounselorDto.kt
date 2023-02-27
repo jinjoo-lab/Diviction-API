@@ -1,6 +1,7 @@
 package com.example.diviction.module.account.dto
 
 import com.example.diviction.module.constant.Gender
+import org.springframework.format.annotation.DateTimeFormat
 import javax.validation.constraints.Email
 
 data class CounselorDto (

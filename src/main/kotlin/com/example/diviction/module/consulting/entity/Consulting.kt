@@ -26,11 +26,11 @@ class Consulting(
     @JoinColumn(name = "counselor_id",nullable = false)
     val consultCounselor : Counselor,
 
-    @NotBlank
+    @field: NotBlank
     val content : String,
 
-    @NotBlank
-    @DateTimeFormat(pattern = "yyyy-MM-dd")
+    @field: NotBlank
+    @field: Pattern(regexp = "^([12]\\d{3}-(0[1-9]|1[0-2])-(0[1-9]|[12]\\d|3[01]))$")
     val date : String
 ){
     @Id
