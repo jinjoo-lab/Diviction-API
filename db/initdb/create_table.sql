@@ -46,3 +46,12 @@ create table diviction.consulting(
     content VARCHAR(2048) NOT NULL ,
     date VARCHAR(32) NOT NULL
 );
+create table diviction.checklist(
+    id BIGINT AUTO_INCREMENT PRIMARY KEY ,
+    user_id BIGINT NOT NULL ,
+    foreign key (user_id) REFERENCES diviction.member(id),
+    start_date VARCHAR(32) NOT NULL ,
+    end_date VARCHAR(32) NOT NULL ,
+    content VARCHAR(2048) NOT NULL ,
+    state VARCHAR(32) NOT NULL
+);

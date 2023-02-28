@@ -1,5 +1,6 @@
 package com.example.diviction.module.account.entity
 
+import com.example.diviction.module.checklist.entity.CheckList
 import com.example.diviction.module.constant.Gender
 import com.example.diviction.module.consulting.dto.ConsultResponseDto
 import com.example.diviction.module.consulting.entity.Consulting
@@ -48,4 +49,7 @@ class Member (
 
     @OneToMany(mappedBy = "consultPatient" , targetEntity = Consulting::class, cascade = [CascadeType.REMOVE], orphanRemoval = true)
     var consultingList : MutableList<Consulting> = mutableListOf()
+
+    @OneToMany(mappedBy = "checkPatient", targetEntity = CheckList::class, cascade = [CascadeType.REMOVE], orphanRemoval = true)
+    var checkLists : MutableList<CheckList> = mutableListOf()
 }
