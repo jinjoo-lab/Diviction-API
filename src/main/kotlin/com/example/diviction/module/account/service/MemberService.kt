@@ -10,6 +10,12 @@ import org.springframework.stereotype.Service
 
 @Service
 class MemberService(private val memberRepository: MemberRepository){
+    fun getMemberById(id : Long) : MemberDto{
+        val member = memberRepository.getById(id)
+
+        return member.toDto()
+    }
+
     fun getMember(email : String) : MemberDto
     {
         val cur = memberRepository.findByEmail(email)

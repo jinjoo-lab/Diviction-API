@@ -61,7 +61,7 @@ class ConsultingService(
     {
         var member = memberRepository.getByEmail(patient_email)
 
-        var page = consultingRepository.findByConsultPatientOrderByDate(member, Pageable.ofSize(10))
+        var page = consultingRepository.findByConsultPatientOrderByDate(member!!, Pageable.ofSize(10))
 
         var list = page?.content ?: null
 

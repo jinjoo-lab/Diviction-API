@@ -57,3 +57,7 @@ create table diviction.checklist(
     content VARCHAR(2048) NOT NULL ,
     state VARCHAR(32) NOT NULL
 );
+create table diviction.refresh_token(
+    token_key VARCHAR(64) PRIMARY KEY ,
+    token_value VARCHAR(512)
+);

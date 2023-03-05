@@ -4,7 +4,9 @@ import org.springframework.security.core.Authentication
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.util.StringUtils
 import org.springframework.web.filter.OncePerRequestFilter
+import java.io.IOException
 import javax.servlet.FilterChain
+import javax.servlet.ServletException
 import javax.servlet.http.HttpServletRequest
 import javax.servlet.http.HttpServletResponse
 
@@ -12,7 +14,9 @@ class JwtFilter(private val tokenProvider: TokenProvider) : OncePerRequestFilter
 
     companion object{
         const val AUTHORIZATION_HEADER = "Authorization"
+        const val BEARER_PREFIX = "Bearer "
     }
+    @Throws(IOException::class, ServletException::class)
     override fun doFilterInternal(
         request: HttpServletRequest,
         response: HttpServletResponse,
@@ -27,13 +31,10 @@ class JwtFilter(private val tokenProvider: TokenProvider) : OncePerRequestFilter
         filterChain.doFilter(request, response)
     }
 
-    private fun resolveToken(request : HttpServletRequest) : String?
-    {
-        val token : String = request.getHeader(AUTHORIZATION_HEADER)
-        if(StringUtils.hasText(token)&&token.startsWith("Bearer "))
-        {
-            return token.substring(7)
-        }else
-            return null
+    private fun resolveToken(request: HttpServletRequest): String? {
+        val bearerToken = request.getHeader(AUTHORIZATION_HEADER)
+        return if (StringUtils.hasText(bearerToken) && bearerToken.startsWith(BEARER_PREFIX)) {
+            bearerToken.substring(7)
+        } else null
     }
 }

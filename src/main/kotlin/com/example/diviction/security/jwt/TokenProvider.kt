@@ -26,7 +26,6 @@ import kotlin.RuntimeException
 @Component
 class TokenProvider(
     @Value("\${jwt.secret}") secretKey : String,
-    @Value("\${spring.profiles/active}") private val activeProfile : String,
     private val memberDetailService : MemberDetailService,
     private val counselorDetailService: MemberDetailService
 ) {
@@ -78,6 +77,8 @@ class TokenProvider(
         }
 
         val role = claim["role"] as String
+        logger.info(role)
+
 
         if(role.equals("ROLE_COUNSELOR"))
         {
@@ -85,7 +86,7 @@ class TokenProvider(
             logger.info("email claim : "+claim["email"] as String)
             return UsernamePasswordAuthenticationToken(claim["email"],"",counselorDetail.authorities)
         }
-        else if(role.equals("ROLE_MEMBER"))
+        else if(role.equals("ROLE_USER"))
         {
             val memberDetail = memberDetailService.loadUserByUsername(claim["email"] as String)
             logger.info("email claim : "+claim["email"] as String)
