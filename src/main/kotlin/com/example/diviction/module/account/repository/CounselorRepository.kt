@@ -8,4 +8,6 @@ interface CounselorRepository : JpaRepository<Counselor,Long> {
     override fun findById(id: Long): Optional<Counselor>
 
     fun findByEmail(email : String) : Optional<Counselor>
+
+    fun getByEmail(email: String) : Counselor?
 }

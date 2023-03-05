@@ -41,27 +41,6 @@ class CounselorService(private val counselorRepository: CounselorRepository) {
             throw RuntimeException("해당 Id의 상담사는 존재하지 않습니다.")
         }
     }
-
-    fun saveCounselor(counselorDto: CounselorDto)
-    {
-        if(counselorRepository.findByEmail(counselorDto.email).isPresent)
-        {
-            throw RuntimeException("해당 이메일의 상담사는 이미 존재합니다.")
-        }
-
-        var counselor : Counselor = Counselor(
-            email = counselorDto.email,
-            password = counselorDto.password,
-            name = counselorDto.name,
-            birth = counselorDto.birth,
-            address = counselorDto.address,
-            gender =  counselorDto.gender,
-            profile_img_url =  counselorDto.profile_img_url
-        )
-
-        counselorRepository.save(counselor)
-    }
-
     fun getConfirm(email: String) : Boolean
     {
         var cur = counselorRepository.findByEmail(email)

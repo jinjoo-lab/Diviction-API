@@ -25,41 +25,6 @@ class MemberService(private val memberRepository: MemberRepository){
         }
     }
 
-    fun getMember(userId : Long) : MemberDto
-    {
-        val cur = memberRepository.findById(userId)
-
-        if(cur.isPresent)
-        {
-            val member = cur.get()
-
-            return member.toDto()
-        }
-        else{
-            throw RuntimeException("해당 Id의 사용자는 존재하지 않습니다.")
-        }
-    }
-
-    fun saveMember(memberDto: MemberDto)
-    {
-        if(memberRepository.findByEmail(memberDto.email).isPresent)
-        {
-            throw RuntimeException("해당 이메일의 사용자는 이미 존재합니다.")
-        }
-
-        val member : Member = Member(
-            email = memberDto.email,
-            password = memberDto.password,
-            name = memberDto.name,
-            birth = memberDto.birth,
-            address = memberDto.address,
-            gender =  memberDto.gender,
-            profile_img_url =  memberDto.profile_img_url
-        )
-
-        memberRepository.save(member)
-    }
-
     fun getMatchById(id : Long) : MatchResponseDto
     {
         var cur = memberRepository.findById(id)
