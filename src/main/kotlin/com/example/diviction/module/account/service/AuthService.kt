@@ -16,6 +16,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Service
+import javax.persistence.EntityNotFoundException
 
 @Service
 class AuthService(
@@ -27,6 +28,11 @@ class AuthService(
     private val passwordEncoder: PasswordEncoder
 ) {
     private val logger = LoggerFactory.getLogger(AuthService::class.java)
+
+    fun validateToken(token : String) : Boolean
+    {
+        return tokenProvider.validateToken(token)
+    }
 
     fun signUpMember(memberDto : MemberDto)
     {
@@ -49,10 +55,21 @@ class AuthService(
         }
     }
 
+    fun signInCounselor(email  : String, password : String,role : Authority) : TokenDto
+    {
+        logger.info("counselor login start")
+        val credit = UsernamePasswordAuthenticationToken(email,password)
+        val authentication = authenticationManagerBuilder.`object`.authenticate(credit)
+        logger.info("authentication : " + authentication.toString())
+        return tokenProvider.createTokenDto(authentication,role).also{
+            refreshTokenRepository.save(RefreshToken(email,it.refreshToken))
+        }
+    }
+
     fun signUpCounselor(counselorDto: CounselorDto)
     {
         val counselor : Counselor = Counselor(
-            counselorDto.email,counselorDto.password,counselorDto.name,counselorDto.birth,
+            counselorDto.email,passwordEncoder.encode(counselorDto.password),counselorDto.name,counselorDto.birth,
             counselorDto.address,counselorDto.gender,counselorDto.profile_img_url,
             Authority.ROLE_COUNSELOR
         )
@@ -60,5 +77,32 @@ class AuthService(
         counselorRepository.save(counselor)
     }
 
+    fun refreshToken(accessToken : String , refreshToken : String,authority: Authority) : TokenDto
+    {
+        if(!tokenProvider.validateToken(refreshToken))
+        {
+            throw RuntimeException("유효하지 않은 토큰입니다")
+        }
 
+        val authentication = try {
+            tokenProvider.getAuthentication(accessToken)
+        }catch (e : EntityNotFoundException)
+        {
+            throw RuntimeException("일치하는 정보가 없습니다.")
+        }
+
+        val userEmail = authentication.name
+        if (getRefreshToken(userEmail).tokenValue != refreshToken) {
+            throw RuntimeException("토큰 정보가 일치하지 않습니다")
+        }
+
+        return tokenProvider.createTokenDto(authentication,authority).also {
+            refreshTokenRepository.save(RefreshToken(userEmail, it.refreshToken))
+        }
+    }
+
+    fun getRefreshToken(userEmail : String) : RefreshToken
+    {
+        return refreshTokenRepository.getById(userEmail)
+    }
 }

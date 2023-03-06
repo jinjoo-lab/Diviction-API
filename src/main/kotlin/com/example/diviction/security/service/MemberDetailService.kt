@@ -2,6 +2,7 @@ package com.example.diviction.security.service
 
 import com.example.diviction.module.account.repository.CounselorRepository
 import com.example.diviction.module.account.repository.MemberRepository
+import com.example.diviction.security.details.CounselorDetails
 import com.example.diviction.security.details.MemberDetails
 import org.springframework.security.core.userdetails.User
 import org.springframework.security.core.userdetails.UserDetails
@@ -16,8 +17,25 @@ class MemberDetailService(
 ) : UserDetailsService
 {
     override fun loadUserByUsername(username: String?): UserDetails {
-        val member = memberRepository.getByEmail(username!!) ?: throw RuntimeException("User not found")
-        return MemberDetails(member)
+        if(username==null)
+        {
+            throw RuntimeException("Username cannot be null!!")
+        }
+
+        else{
+            if(memberRepository.existsByEmail(username))
+            {
+                val member = memberRepository.getByEmail(username)
+                return MemberDetails(member!!)
+            }
+            else if(counselorRepository.existsByEmail(username))
+            {
+                val counselor = counselorRepository.getByEmail(username)
+                return CounselorDetails(counselor!!)
+            }
+
+            throw RuntimeException("User Not Found")
+        }
     }
 
 }

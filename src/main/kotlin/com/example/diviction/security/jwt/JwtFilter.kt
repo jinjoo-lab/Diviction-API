@@ -1,5 +1,6 @@
 package com.example.diviction.security.jwt
 
+import io.jsonwebtoken.ExpiredJwtException
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.security.core.Authentication
@@ -24,12 +25,20 @@ class JwtFilter(private val tokenProvider: TokenProvider) : OncePerRequestFilter
         response: HttpServletResponse,
         filterChain: FilterChain
     ) {
-        val jwt = resolveToken(request)
 
-        if (StringUtils.hasText(jwt) && tokenProvider.validateToken(jwt)) {
-            logger.info("correct token in")
-            val authentication: Authentication = tokenProvider.getAuthentication(jwt!!)
-            SecurityContextHolder.getContext().authentication = authentication
+        val jwt = resolveToken(request)
+        logger.info(jwt)
+
+        try {
+            if (StringUtils.hasText(jwt) && tokenProvider.validateToken(jwt)) {
+                logger.info("correct token in")
+                val authentication: Authentication = tokenProvider.getAuthentication(jwt!!)
+                SecurityContextHolder.getContext().authentication = authentication
+            }
+        }catch(e : ExpiredJwtException)
+        {
+            logger.info("in filter catch Expired exception")
+            response.setHeader("code","AT-DONE")
         }
         filterChain.doFilter(request, response)
     }

@@ -33,7 +33,8 @@ class TokenProvider(
     private val logger: Logger = LoggerFactory.getLogger("JWTTOKEN")
 
     companion object {
-        private const val ACCESS_TOKEN_EXPIRE_TIME: Long = (1000 * 60 * 30).toLong() // 30minute
+        // test
+        private const val ACCESS_TOKEN_EXPIRE_TIME: Long = (1000 * 6).toLong() // 30minute
         private const val REFRESH_TOKEN_EXPIRE_TIME: Long = (1000 * 60 * 60 * 24 * 7).toLong() // 7days
     }
 
@@ -46,11 +47,6 @@ class TokenProvider(
 
     fun createTokenDto(authentication: Authentication, role: Authority): TokenDto {
         logger.info("토큰 생성")
-        val authorities: String = authentication.authorities
-            .map { obj: GrantedAuthority -> obj.authority }
-            .joinToString { "," }
-        logger.info(authorities)
-
 
         val now = Date().time
         val accessExpired = Date(now + ACCESS_TOKEN_EXPIRE_TIME)
@@ -112,8 +108,6 @@ class TokenProvider(
             logger.info("잘못된 JWT 서명입니다.")
         } catch (e: MalformedJwtException) {
             logger.info("잘못된 JWT 서명입니다.")
-        } catch (e: ExpiredJwtException) {
-            logger.info("만료된 JWT 토큰입니다.")
         } catch (e: UnsupportedJwtException) {
             logger.info("지원되지 않는 JWT 토큰입니다.")
         } catch (e: IllegalArgumentException) {
