@@ -53,7 +53,7 @@ class Member(
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     val id: Long? = null
 
-    @OneToOne(mappedBy = "patient", cascade = [CascadeType.REMOVE], orphanRemoval = true)
+    @OneToOne(fetch = FetchType.LAZY, mappedBy = "patient", cascade = [CascadeType.REMOVE], orphanRemoval = true)
     var matching: Matching? = null
 
     @OneToMany(mappedBy = "member", cascade = [CascadeType.REMOVE], orphanRemoval = true)

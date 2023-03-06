@@ -23,7 +23,7 @@ class AuthController(
     @PostMapping("signIn/member")
     fun signInMember(@RequestBody loginDto: LoginDto) : TokenDto
     {
-        return authService.signInMember(loginDto.email,loginDto.password)
+        return authService.signInMember(loginDto.email,loginDto.password,loginDto.authority)
     }
 
 }

@@ -1,5 +1,7 @@
 package com.example.diviction.security.jwt
 
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 import org.springframework.security.core.Authentication
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.util.StringUtils
@@ -11,7 +13,7 @@ import javax.servlet.http.HttpServletRequest
 import javax.servlet.http.HttpServletResponse
 
 class JwtFilter(private val tokenProvider: TokenProvider) : OncePerRequestFilter() {
-
+    val logger : Logger = LoggerFactory.getLogger("JWT FILTER")
     companion object{
         const val AUTHORIZATION_HEADER = "Authorization"
         const val BEARER_PREFIX = "Bearer "
@@ -25,6 +27,7 @@ class JwtFilter(private val tokenProvider: TokenProvider) : OncePerRequestFilter
         val jwt = resolveToken(request)
 
         if (StringUtils.hasText(jwt) && tokenProvider.validateToken(jwt)) {
+            logger.info("correct token in")
             val authentication: Authentication = tokenProvider.getAuthentication(jwt!!)
             SecurityContextHolder.getContext().authentication = authentication
         }

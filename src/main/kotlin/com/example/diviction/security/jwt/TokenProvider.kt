@@ -44,12 +44,18 @@ class TokenProvider(
         logger.info("토큰 초기화 완료")
     }
 
-    fun createTokenDto(userEmail: String, role: Authority): TokenDto {
+    fun createTokenDto(authentication: Authentication, role: Authority): TokenDto {
         logger.info("토큰 생성")
+        val authorities: String = authentication.authorities
+            .map { obj: GrantedAuthority -> obj.authority }
+            .joinToString { "," }
+        logger.info(authorities)
+
+
         val now = Date().time
         val accessExpired = Date(now + ACCESS_TOKEN_EXPIRE_TIME)
         val accessToken: String = Jwts.builder()
-            .claim("email", userEmail)
+            .setSubject(authentication.name)
             .claim("role", role)
             .setExpiration(accessExpired)
             .signWith(key, SignatureAlgorithm.HS512)
@@ -82,15 +88,15 @@ class TokenProvider(
 
         if(role.equals("ROLE_COUNSELOR"))
         {
-            val counselorDetail = counselorDetailService.loadUserByUsername(claim["email"] as String)
-            logger.info("email claim : "+claim["email"] as String)
-            return UsernamePasswordAuthenticationToken(claim["email"],"",counselorDetail.authorities)
+            val authorities: MutableList<GrantedAuthority> = mutableListOf()
+            authorities.add(SimpleGrantedAuthority("ROLE_COUNSELOR"))
+            return UsernamePasswordAuthenticationToken(claim.subject,"",authorities)
         }
         else if(role.equals("ROLE_USER"))
         {
-            val memberDetail = memberDetailService.loadUserByUsername(claim["email"] as String)
-            logger.info("email claim : "+claim["email"] as String)
-            return UsernamePasswordAuthenticationToken(claim["email"],"",memberDetail.authorities)
+            val authorities: MutableList<GrantedAuthority> = mutableListOf()
+            authorities.add(SimpleGrantedAuthority("ROLE_USER"))
+            return UsernamePasswordAuthenticationToken(claim.subject,"",authorities)
         }
         else{
             throw RuntimeException("당신은 관리자 ???")

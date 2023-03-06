@@ -12,6 +12,7 @@ import com.example.diviction.security.entity.RefreshToken
 import com.example.diviction.security.jwt.TokenProvider
 import com.example.diviction.security.repository.RefreshTokenRepository
 import org.slf4j.LoggerFactory
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Service
@@ -37,21 +38,15 @@ class AuthService(
         memberRepository.save(member)
     }
 
-    fun signInMember(email  : String, password : String) : TokenDto
+    fun signInMember(email  : String, password : String,role : Authority) : TokenDto
     {
         logger.info("member login start")
-        val member : Member = memberRepository.getByEmail(email) ?: throw RuntimeException("해당 Email 의 사용자를 찾을 수 없습니다.")
-
-        if(passwordEncoder.matches(password,member.password))
-        {
-            val tokenDto = tokenProvider.createTokenDto(email,Authority.ROLE_USER)
-            logger.info(tokenDto.refreshToken)
-            refreshTokenRepository.save(RefreshToken(email,tokenDto.refreshToken))
-            logger.info("member login success")
-            return tokenDto
+        val credit = UsernamePasswordAuthenticationToken(email,password)
+        val authentication = authenticationManagerBuilder.`object`.authenticate(credit)
+        logger.info("authentication : " + authentication.toString())
+        return tokenProvider.createTokenDto(authentication,role).also{
+            refreshTokenRepository.save(RefreshToken(email,it.refreshToken))
         }
-
-        else throw RuntimeException("해당 Member 정보는 존재하지 않습니다.")
     }
 
     fun signUpCounselor(counselorDto: CounselorDto)
@@ -64,4 +59,6 @@ class AuthService(
 
         counselorRepository.save(counselor)
     }
+
+
 }
