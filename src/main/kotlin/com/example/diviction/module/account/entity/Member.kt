@@ -5,9 +5,13 @@ import com.example.diviction.module.constant.Gender
 import com.example.diviction.module.consulting.dto.ConsultResponseDto
 import com.example.diviction.module.consulting.entity.Consulting
 import com.example.diviction.module.diagnosis.entity.DiagnosisResult
+import com.example.diviction.security.constants.Authority
+import com.fasterxml.jackson.annotation.JsonProperty
 import lombok.Getter
 import lombok.ToString
 import org.springframework.format.annotation.DateTimeFormat
+import org.springframework.security.core.GrantedAuthority
+import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.validation.annotation.Validated
 import javax.persistence.*
 import javax.validation.Valid
@@ -18,38 +22,57 @@ import javax.validation.constraints.Pattern
 @Entity
 @Getter
 @ToString
-class Member (
+class Member(
+    @field: Column(nullable = false, unique = true)
     @field: Email
     @field: NotBlank
-    var email : String,
+    var email: String,
+
     @field: NotBlank
-    var password : String,
+    @field: Column(nullable = false)
+    @field : JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+    var password: String,
+
     @field: NotBlank
-    var name : String,
+    var name: String,
 
     @field: NotBlank
     @field: Pattern(regexp = "^([12]\\d{3}-(0[1-9]|1[0-2])-(0[1-9]|[12]\\d|3[01]))$")
-    var birth : String,
+    var birth: String,
     @field: NotBlank
-    var address : String,
+    var address: String,
     @Enumerated(EnumType.STRING)
-    var gender : Gender,
+    var gender: Gender,
     @field: NotBlank
-    var profile_img_url : String
-    ){
+    var profile_img_url: String,
+
+    @Enumerated(EnumType.STRING)
+    val authority : Authority
+) {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    val id : Long? = null
+    val id: Long? = null
 
-    @OneToOne(mappedBy = "patient" ,cascade = [CascadeType.REMOVE], orphanRemoval = true)
-    var matching : Matching? = null
+    @OneToOne(fetch = FetchType.LAZY, mappedBy = "patient", cascade = [CascadeType.REMOVE], orphanRemoval = true)
+    var matching: Matching? = null
 
     @OneToMany(mappedBy = "member", cascade = [CascadeType.REMOVE], orphanRemoval = true)
-    var diagnosisList : MutableList<DiagnosisResult> = mutableListOf()
+    var diagnosisList: MutableList<DiagnosisResult> = mutableListOf()
 
-    @OneToMany(mappedBy = "consultPatient" , targetEntity = Consulting::class, cascade = [CascadeType.REMOVE], orphanRemoval = true)
-    var consultingList : MutableList<Consulting> = mutableListOf()
+    @OneToMany(
+        mappedBy = "consultPatient",
+        targetEntity = Consulting::class,
+        cascade = [CascadeType.REMOVE],
+        orphanRemoval = true
+    )
+    var consultingList: MutableList<Consulting> = mutableListOf()
 
-    @OneToMany(mappedBy = "checkPatient", targetEntity = CheckList::class, cascade = [CascadeType.REMOVE], orphanRemoval = true)
-    var checkLists : MutableList<CheckList> = mutableListOf()
+    @OneToMany(
+        mappedBy = "checkPatient",
+        targetEntity = CheckList::class,
+        cascade = [CascadeType.REMOVE],
+        orphanRemoval = true
+    )
+    var checkLists: MutableList<CheckList> = mutableListOf()
+
 }

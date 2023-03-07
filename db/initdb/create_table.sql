@@ -7,7 +7,8 @@ create table diviction.member(
     birth VARCHAR(64) NOT NULL ,
     address VARCHAR(256) NOT NULL ,
     gender VARCHAR(32) NOT NULL ,
-    profile_img_url VARCHAR(256) NOT NULL
+    profile_img_url VARCHAR(256) NOT NULL,
+    authority VARCHAR(32) NOT NULL
 );
 create table diviction.counselor(
     id BIGINT AUTO_INCREMENT PRIMARY KEY ,
@@ -18,7 +19,8 @@ create table diviction.counselor(
     address VARCHAR(256) NOT NULL ,
     gender VARCHAR(32) NOT NULL ,
     profile_img_url VARCHAR(256) NOT NULL,
-    confirm BOOLEAN
+    confirm BOOLEAN,
+    authority VARCHAR(32) NOT NULL
 );
 create table diviction.matching(
     id BIGINT AUTO_INCREMENT PRIMARY KEY ,
@@ -54,4 +56,8 @@ create table diviction.checklist(
     end_date VARCHAR(32) NOT NULL ,
     content VARCHAR(2048) NOT NULL ,
     state VARCHAR(32) NOT NULL
+);
+create table diviction.refresh_token(
+    token_key VARCHAR(64) PRIMARY KEY ,
+    token_value VARCHAR(512)
 );

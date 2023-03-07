@@ -2,6 +2,7 @@ package com.example.diviction.module.account.entity
 
 import com.example.diviction.module.constant.Gender
 import com.example.diviction.module.consulting.entity.Consulting
+import com.example.diviction.security.constants.Authority
 import lombok.Getter
 import lombok.ToString
 import org.springframework.format.annotation.DateTimeFormat
@@ -29,7 +30,10 @@ class Counselor(
     @Enumerated(EnumType.STRING)
     var gender : Gender,
     @field: NotBlank
-    var profile_img_url : String
+    var profile_img_url : String,
+
+    @Enumerated(EnumType.STRING)
+    val authority : Authority
 
 ){
     @Id
