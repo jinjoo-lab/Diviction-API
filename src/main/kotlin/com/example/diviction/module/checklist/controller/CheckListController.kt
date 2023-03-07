@@ -17,7 +17,7 @@ class CheckListController(private val checkListService: CheckListService) {
     }
 
     @PostMapping("/get")
-    fun getCheckList(@RequestBody searchCheckList: SearchCheckList) : List<String>
+    fun getCheckList(@RequestHeader(name = "RT") header : String,@RequestBody searchCheckList: SearchCheckList) : List<String>
     {
         return checkListService.getCheckList(searchCheckList)
     }
