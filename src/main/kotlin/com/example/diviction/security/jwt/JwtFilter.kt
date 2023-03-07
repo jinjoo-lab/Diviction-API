@@ -14,9 +14,11 @@ import javax.servlet.http.HttpServletRequest
 import javax.servlet.http.HttpServletResponse
 
 class JwtFilter(private val tokenProvider: TokenProvider) : OncePerRequestFilter() {
+
     val logger : Logger = LoggerFactory.getLogger("JWT FILTER")
     companion object{
         const val AUTHORIZATION_HEADER = "Authorization"
+        const val REFRESH_TOKEN = "RT"
         const val BEARER_PREFIX = "Bearer "
     }
     @Throws(IOException::class, ServletException::class)
@@ -27,7 +29,6 @@ class JwtFilter(private val tokenProvider: TokenProvider) : OncePerRequestFilter
     ) {
 
         val jwt = resolveToken(request)
-        logger.info(jwt)
 
         try {
             if (StringUtils.hasText(jwt) && tokenProvider.validateToken(jwt)) {
@@ -38,7 +39,23 @@ class JwtFilter(private val tokenProvider: TokenProvider) : OncePerRequestFilter
         }catch(e : ExpiredJwtException)
         {
             logger.info("in filter catch Expired exception")
-            response.setHeader("code","AT-DONE")
+
+            val refreshToken = request.getHeader(REFRESH_TOKEN)
+            if(StringUtils.hasText(refreshToken)&& tokenProvider.validateToken(refreshToken))
+            {
+                if(tokenProvider.checkRefreshToken(refreshToken))
+                {
+                    val ROLE = tokenProvider.getRole(refreshToken)
+                    val reauthentication : Authentication = tokenProvider.getAuthentication(refreshToken)
+
+                    val reTokenDto = tokenProvider.createRefreshTokenDto(reauthentication,ROLE)
+
+                    response.setHeader(REFRESH_TOKEN,reTokenDto.refreshToken)
+                    response.setHeader(AUTHORIZATION_HEADER,"Bearer "+reTokenDto.accessToken)
+                    SecurityContextHolder.getContext().authentication = reauthentication
+                }
+            }
+            response.setHeader("code","ATE")
         }
         filterChain.doFilter(request, response)
     }

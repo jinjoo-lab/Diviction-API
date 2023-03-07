@@ -5,5 +5,5 @@ import org.springframework.data.jpa.repository.JpaRepository
 
 
 interface RefreshTokenRepository : JpaRepository<RefreshToken,String> {
-
+    fun existsByTokenValue(token : String) : Boolean
 }

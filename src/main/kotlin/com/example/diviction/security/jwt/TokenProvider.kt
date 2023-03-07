@@ -4,6 +4,8 @@ package com.example.diviction.security.jwt
 
 import com.example.diviction.module.account.dto.TokenDto
 import com.example.diviction.security.constants.Authority
+import com.example.diviction.security.entity.RefreshToken
+import com.example.diviction.security.repository.RefreshTokenRepository
 import com.example.diviction.security.service.MemberDetailService
 import io.jsonwebtoken.*
 import io.jsonwebtoken.io.Decoders
@@ -27,14 +29,15 @@ import kotlin.RuntimeException
 class TokenProvider(
     @Value("\${jwt.secret}") secretKey : String,
     private val memberDetailService : MemberDetailService,
-    private val counselorDetailService: MemberDetailService
+    private val counselorDetailService: MemberDetailService,
+    private val refreshTokenRepository : RefreshTokenRepository
 ) {
     private val key: Key
     private val logger: Logger = LoggerFactory.getLogger("JWTTOKEN")
 
     companion object {
         // test
-        private const val ACCESS_TOKEN_EXPIRE_TIME: Long = (1000 * 6).toLong() // 30minute
+        private const val ACCESS_TOKEN_EXPIRE_TIME: Long = (1000 * 60 * 30).toLong() // 30minute
         private const val REFRESH_TOKEN_EXPIRE_TIME: Long = (1000 * 60 * 60 * 24 * 7).toLong() // 7days
     }
 
@@ -45,9 +48,14 @@ class TokenProvider(
         logger.info("토큰 초기화 완료")
     }
 
+    fun checkRefreshToken(refreshToken : String) : Boolean
+    {
+        return refreshTokenRepository.existsByTokenValue(refreshToken)
+    }
+
     fun createTokenDto(authentication: Authentication, role: Authority): TokenDto {
         logger.info("토큰 생성")
-
+        logger.info(authentication.name)
         val now = Date().time
         val accessExpired = Date(now + ACCESS_TOKEN_EXPIRE_TIME)
         val accessToken: String = Jwts.builder()
@@ -58,6 +66,8 @@ class TokenProvider(
             .compact()
 
         val refreshToken: String = Jwts.builder()
+            .setSubject(authentication.name)
+            .claim("role", role)
             .setExpiration(Date(now + REFRESH_TOKEN_EXPIRE_TIME))
             .signWith(key, SignatureAlgorithm.HS512)
             .compact()
@@ -69,6 +79,47 @@ class TokenProvider(
         )
     }
 
+    fun createRefreshTokenDto(authentication: Authentication,role : Authority) : TokenDto
+    {
+        val now = Date().time
+        val accessExpired = Date(now + ACCESS_TOKEN_EXPIRE_TIME)
+        val accessToken: String = Jwts.builder()
+            .setSubject(authentication.name)
+            .claim("role", role)
+            .setExpiration(accessExpired)
+            .signWith(key, SignatureAlgorithm.HS512)
+            .compact()
+
+        val refreshToken: String = Jwts.builder()
+            .setSubject(authentication.name)
+            .claim("role", role)
+            .setExpiration(Date(now + REFRESH_TOKEN_EXPIRE_TIME))
+            .signWith(key, SignatureAlgorithm.HS512)
+            .compact()
+
+        refreshTokenRepository.save(RefreshToken(authentication.name,refreshToken))
+
+        return TokenDto(
+            accessToken,
+            refreshToken,
+            accessExpired.time
+        )
+    }
+
+    fun getRole(token: String) : Authority
+    {
+        val claim = parseClaims(token)
+
+        val role = claim["role"] as String
+
+        if(role.equals("ROLE_USER"))
+            return Authority.ROLE_USER
+
+        else if(role.equals("ROLE_COUNSELOR"))
+            return Authority.ROLE_COUNSELOR
+
+        else throw RuntimeException("that token cannot have ROLE!!")
+    }
     fun getAuthentication(accessToken : String) : Authentication
     {
         val claim = parseClaims(accessToken)
