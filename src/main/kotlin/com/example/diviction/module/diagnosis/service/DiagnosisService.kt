@@ -15,7 +15,7 @@ private val memberRepository: MemberRepository) {
         var memebr = memberRepository.getByEmail(email = diagnosisResultDto.patientEmail)
 
         var result = DiagnosisResult(
-            memebr,diagnosisResultDto.date,diagnosisResultDto.vP1,diagnosisResultDto.vP2,diagnosisResultDto.vP3
+            memebr!!,diagnosisResultDto.date,diagnosisResultDto.vP1,diagnosisResultDto.vP2,diagnosisResultDto.vP3
         )
         memebr.diagnosisList.add(result)
         diagnosisRepository.save(result)

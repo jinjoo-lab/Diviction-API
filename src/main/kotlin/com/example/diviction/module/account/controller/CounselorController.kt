@@ -33,11 +33,6 @@ class CounselorController(private val counselorService: CounselorService) {
         counselorService.setConfirmByEmail(email)
     }
 
-    @PostMapping("/save")
-    fun saveCounselor(@RequestBody counselorDto : CounselorDto)
-    {
-        counselorService.saveCounselor(counselorDto)
-    }
 
     @GetMapping("/delete/{id}")
     fun deleteCounselor(@PathVariable id :Long)
