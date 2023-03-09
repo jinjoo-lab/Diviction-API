@@ -1,11 +1,9 @@
 package com.example.diviction.module.drugofmember.dto
 
-import com.example.diviction.module.account.entity.Member
-import com.example.diviction.module.drug.entity.Drug
-import javax.validation.constraints.NotNull
+import javax.validation.constraints.NotBlank
 
 data class DrugOfMemberSaveRequest (
-    @NotNull var member : Member,
-    @NotNull var drug : Drug
+    @NotBlank val memberId : Long,
+    @NotBlank val drugId : Long
         ){
 }
