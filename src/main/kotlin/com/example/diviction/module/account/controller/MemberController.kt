@@ -19,18 +19,13 @@ import javax.validation.Valid
 class MemberController (private val memberService: MemberService){
 
     @GetMapping("/get/{userId}")
-    fun getMember(@PathVariable userId : Long) : MemberDto
+    fun getMemberById(@PathVariable userId : Long) : MemberDto
     {
-        val result : MemberDto = memberService.getMember(userId)
+        val result : MemberDto = memberService.getMemberById(userId)
 
         return result
     }
 
-    @PostMapping("/save")
-    fun saveMember(@Valid @RequestBody memberDto: MemberDto)
-    {
-        memberService.saveMember(memberDto)
-    }
 
     @GetMapping("/match/{id}")
     fun getMatchById(@PathVariable id : Long) : MatchResponseDto

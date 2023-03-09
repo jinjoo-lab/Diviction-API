@@ -5,7 +5,6 @@ import org.springframework.format.annotation.DateTimeFormat
 import javax.validation.constraints.Email
 
 data class CounselorDto (
-    @Email
     var email : String,
 
     var password : String,

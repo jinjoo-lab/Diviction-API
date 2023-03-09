@@ -7,7 +7,8 @@ create table diviction.member(
     birth VARCHAR(64) NOT NULL ,
     address VARCHAR(256) NOT NULL ,
     gender VARCHAR(32) NOT NULL ,
-    profile_img_url VARCHAR(256) NOT NULL
+    profile_img_url VARCHAR(256) NOT NULL,
+    authority VARCHAR(32) NOT NULL
 );
 create table diviction.counselor(
     id BIGINT AUTO_INCREMENT PRIMARY KEY ,
@@ -18,7 +19,16 @@ create table diviction.counselor(
     address VARCHAR(256) NOT NULL ,
     gender VARCHAR(32) NOT NULL ,
     profile_img_url VARCHAR(256) NOT NULL,
-    confirm BOOLEAN
+    confirm BOOLEAN,
+    authority VARCHAR(32) NOT NULL
+);
+create table diviction.drug(
+    id BIGINT AUTO_INCREMENT PRIMARY KEY ,
+    drug_name VARCHAR(32) NOT NULL
+);
+create table diviction.drug_member(
+    user_id BIGINT REFERENCES diviction.member(id),
+    drug_id BIGINT REFERENCES diviction.drug(id)
 );
 create table diviction.matching(
     id BIGINT AUTO_INCREMENT PRIMARY KEY ,
@@ -45,4 +55,17 @@ create table diviction.consulting(
     foreign key (counselor_id) REFERENCES diviction.counselor(id),
     content VARCHAR(2048) NOT NULL ,
     date VARCHAR(32) NOT NULL
+);
+create table diviction.checklist(
+    id BIGINT AUTO_INCREMENT PRIMARY KEY ,
+    user_id BIGINT NOT NULL ,
+    foreign key (user_id) REFERENCES diviction.member(id),
+    start_date VARCHAR(32) NOT NULL ,
+    end_date VARCHAR(32) NOT NULL ,
+    content VARCHAR(2048) NOT NULL ,
+    state VARCHAR(32) NOT NULL
+);
+create table diviction.refresh_token(
+    token_key VARCHAR(64) PRIMARY KEY ,
+    token_value VARCHAR(512)
 );

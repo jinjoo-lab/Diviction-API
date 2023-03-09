@@ -1,40 +1,39 @@
 package com.example.diviction
 
+import io.swagger.v3.oas.models.Components
+import io.swagger.v3.oas.models.ExternalDocumentation
+import io.swagger.v3.oas.models.OpenAPI
+import io.swagger.v3.oas.models.info.Info
+import io.swagger.v3.oas.models.security.SecurityRequirement
+import io.swagger.v3.oas.models.security.SecurityScheme
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
-import springfox.documentation.builders.ApiInfoBuilder
-import springfox.documentation.builders.PathSelectors
-import springfox.documentation.builders.RequestHandlerSelectors
-import springfox.documentation.spi.DocumentationType
-import springfox.documentation.spring.web.plugins.Docket
 
 @Configuration
 class SwaggerConfiguration {
+
     @Bean
-    fun swaggerApi() : Docket = Docket(DocumentationType.OAS_30)
-        .consumes(getConsumeContentTypes())
-        .produces(getProduceContentTypes())
-        .apiInfo(swaggerInfo())
-        .select()
-        .paths(PathSelectors.any())
-        .build()
-        .useDefaultResponseMessages(false)
-
-    private fun swaggerInfo() = ApiInfoBuilder()
-        .title("GSC API TEST")
-        .description("swagger api 명세")
-        .version("1.0.0")
-        .build()
-
-    private fun getConsumeContentTypes(): Set<String> {
-        val consumes = HashSet<String>()
-        consumes.add("multipart/form-data")
-        return consumes
-    }
-
-    private fun getProduceContentTypes(): Set<String> {
-        val produces = HashSet<String>()
-        produces.add("application/json;charset=UTF-8")
-        return produces
+    fun getOpenAPI(): OpenAPI {
+        return OpenAPI()
+            .info(
+                Info().title("Diviction")
+                    .description("진주원 여기 잠들다")
+                    .version("v0.0.1")
+            )
+            .externalDocs(
+                ExternalDocumentation()
+                    .description("External Description Here")
+            )
+            .components(
+                Components().addSecuritySchemes(
+                    "bearerAuth", SecurityScheme().type(SecurityScheme.Type.HTTP).scheme("bearer").bearerFormat("JWT")
+                        .`in`(SecurityScheme.In.HEADER).name("Authorization")
+                )
+            )
+            .security(
+                listOf(
+                    SecurityRequirement().addList("bearerAuth")
+                )
+            )
     }
 }
