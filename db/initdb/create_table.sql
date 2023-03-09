@@ -20,6 +20,14 @@ create table diviction.counselor(
     profile_img_url VARCHAR(256) NOT NULL,
     confirm BOOLEAN
 );
+create table diviction.drug(
+    id BIGINT AUTO_INCREMENT PRIMARY KEY ,
+    drug_name VARCHAR(32) NOT NULL
+);
+create table diviction.drug_member(
+    user_id BIGINT REFERENCES diviction.member(id),
+    drug_id BIGINT REFERENCES diviction.drug(id)
+);
 create table diviction.matching(
     id BIGINT AUTO_INCREMENT PRIMARY KEY ,
     patient_id BIGINT NOT NULL,

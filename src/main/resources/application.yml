@@ -7,11 +7,16 @@ spring:
     show-sql: true
     hibernate:
       physical_naming_strategy: org.springframework.boot.orm.jpa.hibernate.SpringPhysicalNamingStrategy
+      ddl-auto: create-drop
     properties:
       hibernate:
         format_sql: true
+        show_sql: true #show sql
+
   datasource:
-    url: jdbc:mariadb://localhost:3306/diviction
+    url: jdbc:mariadb://localhost:3306/diviction?characterEncoding=UTF-8&serverTimezone=UTC
     driver-class-name: org.mariadb.jdbc.Driver
-    username: root
-    password: jinjooone123!
+    username: diviction
+    password: diviction!
+  profile:
+    on-active: local
