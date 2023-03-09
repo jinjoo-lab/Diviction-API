@@ -37,7 +37,7 @@ class TokenProvider(
 
     companion object {
         // test
-        private const val ACCESS_TOKEN_EXPIRE_TIME: Long = (1000 * 60 * 30).toLong() // 30minute
+        private const val ACCESS_TOKEN_EXPIRE_TIME: Long = (1000* 60 * 30).toLong() // 30minute * 60 * 30
         private const val REFRESH_TOKEN_EXPIRE_TIME: Long = (1000 * 60 * 60 * 24 * 7).toLong() // 7days
     }
 

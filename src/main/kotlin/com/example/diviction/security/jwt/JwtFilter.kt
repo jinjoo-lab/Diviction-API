@@ -27,7 +27,6 @@ class JwtFilter(private val tokenProvider: TokenProvider) : OncePerRequestFilter
         response: HttpServletResponse,
         filterChain: FilterChain
     ) {
-
         val jwt = resolveToken(request)
 
         try {
@@ -36,26 +35,32 @@ class JwtFilter(private val tokenProvider: TokenProvider) : OncePerRequestFilter
                 val authentication: Authentication = tokenProvider.getAuthentication(jwt!!)
                 SecurityContextHolder.getContext().authentication = authentication
             }
-        }catch(e : ExpiredJwtException)
+
+        }catch(e : ExpiredJwtException) // 만료된 경우
         {
             logger.info("in filter catch Expired exception")
 
-            val refreshToken = request.getHeader(REFRESH_TOKEN)
-            if(StringUtils.hasText(refreshToken)&& tokenProvider.validateToken(refreshToken))
+            val refreshToken = request.getHeader(REFRESH_TOKEN) // 리프레시 확인
+
+            if(StringUtils.hasText(refreshToken)&&tokenProvider.validateToken(refreshToken))
             {
-                if(tokenProvider.checkRefreshToken(refreshToken))
+                if(tokenProvider.checkRefreshToken(refreshToken)) // 확인
                 {
                     val ROLE = tokenProvider.getRole(refreshToken)
                     val reauthentication : Authentication = tokenProvider.getAuthentication(refreshToken)
 
                     val reTokenDto = tokenProvider.createRefreshTokenDto(reauthentication,ROLE)
+                    // 새로운 토큰 생성
 
                     response.setHeader(REFRESH_TOKEN,reTokenDto.refreshToken)
                     response.setHeader(AUTHORIZATION_HEADER,"Bearer "+reTokenDto.accessToken)
                     SecurityContextHolder.getContext().authentication = reauthentication
+
+                    // 200 성공 (헤더 : 새로운 토큰 , 바디 : 사용자 요청한 내용)
                 }
             }
-            response.setHeader("code","ATE")
+            // 401 -> 리프레시 토큰 2주가 지나서 만료 ( 로그아웃 )  -> error
+            response.setHeader("code","ATE") // error response header code : ATE (로그아웃)
         }
         filterChain.doFilter(request, response)
     }
