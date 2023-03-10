@@ -27,6 +27,7 @@ create table diviction.drug(
     drug_name VARCHAR(32) NOT NULL
 );
 create table diviction.drug_member(
+    id BIGINT AUTO_INCREMENT PRIMARY KEY ,
     user_id BIGINT REFERENCES diviction.member(id),
     drug_id BIGINT REFERENCES diviction.drug(id)
 );
