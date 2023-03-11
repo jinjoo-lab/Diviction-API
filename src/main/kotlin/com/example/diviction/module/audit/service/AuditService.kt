@@ -6,6 +6,7 @@ import com.example.diviction.module.audit.entity.Audit
 import com.example.diviction.module.audit.repository.AuditRepository
 import org.springframework.stereotype.Service
 import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 
 @Service
 class AuditService(
@@ -21,7 +22,7 @@ class AuditService(
             this.member = memberRepository.findById(auditSaveRequest.memberId!!).get()
             this.q1 = auditSaveRequest.q1
             this.score = auditSaveRequest.score
-            this.date = LocalDate.now().format(java.time.format.DateTimeFormatter.ofPattern("yyyy-MM-dd")).toString()
+            this.date = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))
         }
         auditRepository.save(audit)
     }
