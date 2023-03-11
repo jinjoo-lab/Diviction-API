@@ -78,4 +78,13 @@ create table diviction.audit(
     q1 INT NOT NULL ,
     score INT NOT NULL
 );
+create table diviction.dass(
+    id BIGINT AUTO_INCREMENT PRIMARY KEY ,
+    user_id BIGINT NOT NULL REFERENCES diviction.member(id),
+    date VARCHAR(32) NOT NULL ,
+    melancholy_score INT NOT NULL ,
+    unrest_score INT NOT NULL ,
+    stress_score INT NOT NULL
+);
+
 
