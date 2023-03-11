@@ -5,6 +5,9 @@ import com.example.diviction.module.dass.dto.DassSaveRequest
 import com.example.diviction.module.dass.entity.Dass
 import com.example.diviction.module.dass.repository.DassRepository
 import org.springframework.stereotype.Service
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
+
 
 @Service
 class DassService(
@@ -28,6 +31,7 @@ class DassService(
             this.melancholyScore = dassSaveRequest.melancholyScore
             this.unrestScore = dassSaveRequest.unrestScore
             this.stressScore = dassSaveRequest.stressScore
+            this.date = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))
         }
         dassRepository.save(dass)
     }
