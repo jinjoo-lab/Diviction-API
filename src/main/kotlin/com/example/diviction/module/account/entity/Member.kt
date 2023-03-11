@@ -1,5 +1,6 @@
 package com.example.diviction.module.account.entity
 
+import com.example.diviction.module.DAST.entity.Dast
 import com.example.diviction.module.checklist.entity.CheckList
 import com.example.diviction.module.constant.Gender
 import com.example.diviction.module.consulting.dto.ConsultResponseDto
@@ -74,5 +75,13 @@ class Member(
         orphanRemoval = true
     )
     var checkLists: MutableList<CheckList> = mutableListOf()
+
+    @OneToMany(
+        mappedBy = "dastMember",
+        targetEntity = Dast::class,
+        cascade = [CascadeType.REMOVE],
+        orphanRemoval = true
+    )
+    var dastLists : MutableList<Dast> = mutableListOf()
 
 }
