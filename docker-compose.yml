@@ -6,9 +6,9 @@ services:
     ports:
       - 3306:3306
     volumes:
+      - ./db/initdb:/docker-entrypoint-initdb.d
       - ./db/conf.d:/etc/mysql/conf.d
       - ./db/data:/var/lib/mysql
-      - ./db/initdb:/docker-entrypoint-initdb.d
     env_file: .env
     environment:
       TZ: Asia/Seoul

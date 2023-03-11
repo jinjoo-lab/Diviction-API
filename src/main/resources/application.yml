@@ -1,4 +1,3 @@
-
 spring:
   mvc:
     pathmatch:
@@ -7,8 +6,8 @@ spring:
     database: mysql
     show-sql: true
     hibernate:
-      physical_naming_strategy: org.springframework.boot.orm.jpa.hibernate.SpringPhysicalNamingStrategy
-      ddl-auto: create-drop
+     # physical_naming_strategy: org.springframework.boot.orm.jpa.hibernate.SpringPhysicalNamingStrategy
+      ddl-auto: none
     properties:
       hibernate:
         format_sql: true
@@ -21,7 +20,7 @@ spring:
     password: diviction!
   profile:
     on-active: local
-    
+
 jwt:
   secret: 6d0082d38e23cbc624b92b980b91e410de944f2dac5d6bfdca12f3a1a314703e50abe4fe18f958101b56434e593fd3bf8194502b6e1ab3a86c132accbc424ad4
 server:

@@ -1,3 +1,4 @@
+drop database diviction;
 create database diviction;
 create table diviction.member(
     id BIGINT AUTO_INCREMENT PRIMARY KEY ,
