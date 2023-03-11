@@ -1,4 +1,4 @@
-version: "3"
+version: "3.7"
 
 services:
   db:
@@ -6,7 +6,7 @@ services:
     ports:
       - 3306:3306
     volumes:
-      - ./db/initdb:/docker-entrypoint-initdb.d
+      - ./db/init:/docker-entrypoint-initdb.d
       - ./db/conf.d:/etc/mysql/conf.d
       - ./db/data:/var/lib/mysql
     env_file: .env
