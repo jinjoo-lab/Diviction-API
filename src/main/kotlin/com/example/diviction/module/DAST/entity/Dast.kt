@@ -17,16 +17,12 @@ class Dast(
     @field: JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     val date : LocalDate,
 
-    @field: NotBlank
     val frequency : Long,
 
-    @field: NotBlank
     val injection : Long,
 
-    @field: NotBlank
     val cure : Long,
 
-    @field: NotBlank
     val question : Long,
 
     @ManyToOne(fetch = FetchType.LAZY)

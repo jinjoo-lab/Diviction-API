@@ -1,5 +1,7 @@
 package com.example.diviction.module.DAST.service
 
+import com.example.diviction.module.DAST.dto.GetDastDto
+import com.example.diviction.module.DAST.dto.ResultDastDto
 import com.example.diviction.module.DAST.dto.SaveDastDto
 import com.example.diviction.module.DAST.entity.Dast
 import com.example.diviction.module.DAST.repository.DastRepository
@@ -33,4 +35,27 @@ class DastService(
 
         dastRepository.save(dast)
     }
+
+    fun getDast(getDastDto: GetDastDto) : ResultDastDto
+    {
+        val dastList =  memberRepository.getByEmail(getDastDto.member_email)!!.dastLists
+        var result : Dast? = null
+
+        dastList.forEach {
+            if(it.date.equals(getDastDto.date))
+            {
+                result = it
+            }
+        }
+
+        if(result==null)
+            throw RuntimeException("검사 결과가 존재하지 안습니다.")
+
+        return result!!.toDto()
+    }
+
+    fun Dast.toDto() : ResultDastDto = ResultDastDto(
+            drug, date, frequency, injection, cure, question
+        )
+
 }
