@@ -80,6 +80,21 @@ create table diviction.refresh_token
     token_key   VARCHAR(64) PRIMARY KEY,
     token_value VARCHAR(512)
 );
+create table diviction.audit(
+    id BIGINT AUTO_INCREMENT PRIMARY KEY ,
+    user_id BIGINT NOT NULL REFERENCES diviction.member(id),
+    date VARCHAR(32) NOT NULL ,
+    q1 INT NOT NULL ,
+    score INT NOT NULL
+);
+create table diviction.dass(
+    id BIGINT AUTO_INCREMENT PRIMARY KEY ,
+    user_id BIGINT NOT NULL REFERENCES diviction.member(id),
+    date VARCHAR(32) NOT NULL ,
+    melancholy_score INT NOT NULL ,
+    unrest_score INT NOT NULL ,
+    stress_score INT NOT NULL
+);
 create table diviction.dast
 (
     id BIGINT AUTO_INCREMENT PRIMARY KEY ,
