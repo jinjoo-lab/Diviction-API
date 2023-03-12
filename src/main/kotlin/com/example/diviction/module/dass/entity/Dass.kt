@@ -13,7 +13,7 @@ class Dass() {
     var id : Long? = null
 
     @ManyToOne
-    @JoinColumn(name = "member_id")
+    @JoinColumn(name = "user_id")
     var member : Member? = null
 
     @Column(name = "date")
