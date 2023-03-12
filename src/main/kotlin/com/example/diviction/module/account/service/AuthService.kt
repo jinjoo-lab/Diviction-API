@@ -1,5 +1,6 @@
 package com.example.diviction.module.account.service
 
+import com.example.diviction.module.account.dto.AutoLoginDto
 import com.example.diviction.module.account.dto.CounselorDto
 import com.example.diviction.module.account.dto.MemberDto
 import com.example.diviction.module.account.dto.TokenDto
@@ -11,12 +12,18 @@ import com.example.diviction.security.constants.Authority
 import com.example.diviction.security.entity.RefreshToken
 import com.example.diviction.security.jwt.TokenProvider
 import com.example.diviction.security.repository.RefreshTokenRepository
+import io.jsonwebtoken.ExpiredJwtException
+import io.jsonwebtoken.security.SignatureException
 import org.slf4j.LoggerFactory
+import org.springframework.http.HttpHeaders
+import org.springframework.http.HttpStatus
+import org.springframework.http.MediaType
+import org.springframework.http.ResponseEntity
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Service
-import javax.persistence.EntityNotFoundException
+
 
 @Service
 class AuthService(
@@ -28,11 +35,6 @@ class AuthService(
     private val passwordEncoder: PasswordEncoder
 ) {
     private val logger = LoggerFactory.getLogger(AuthService::class.java)
-
-    fun validateToken(token : String) : Boolean
-    {
-        return tokenProvider.validateToken(token)
-    }
 
     fun signUpMember(memberDto : MemberDto)
     {
@@ -77,28 +79,39 @@ class AuthService(
         counselorRepository.save(counselor)
     }
 
-    fun refreshToken(accessToken : String , refreshToken : String,authority: Authority) : TokenDto
+    fun refreshToken(autoLoginDto: AutoLoginDto) : ResponseEntity<TokenDto?>
     {
-        if(!tokenProvider.validateToken(refreshToken))
+        var header : HttpHeaders = HttpHeaders()
+        header.contentType = MediaType("application","json",Charsets.UTF_8)
+
+        try {
+            if(!tokenProvider.validateToken(autoLoginDto.refreshToken)||!refreshTokenRepository.existsByTokenValue(autoLoginDto.refreshToken))
+            {
+                println("wrong refresh token")
+                return ResponseEntity(null,header, HttpStatus.UNAUTHORIZED)
+            }
+        }catch (e : ExpiredJwtException)
         {
-            throw RuntimeException("유효하지 않은 토큰입니다")
+            println("expired refresh jwt exception")
+            header.set("CODE","RTE")
+            return ResponseEntity(null,header, HttpStatus.UNAUTHORIZED)
         }
 
-        val authentication = try {
-            tokenProvider.getAuthentication(accessToken)
-        }catch (e : EntityNotFoundException)
+        try{
+            if(!tokenProvider.validateToken(autoLoginDto.accessToken))
+            {
+                println("wrong access token")
+                return ResponseEntity(null,header, HttpStatus.UNAUTHORIZED)
+            }
+        }catch (e : ExpiredJwtException)
         {
-            throw RuntimeException("일치하는 정보가 없습니다.")
+            println("expired access jwt exception")
+            val authentication = tokenProvider.getAuthentication(autoLoginDto.refreshToken)
+            val accessToken = tokenProvider.createAccessToken(authentication,autoLoginDto.authority)
+            return ResponseEntity(TokenDto(accessToken.accessToken,autoLoginDto.refreshToken,accessToken.expire),header, HttpStatus.OK)
         }
 
-        val userEmail = authentication.name
-        if (getRefreshToken(userEmail).tokenValue != refreshToken) {
-            throw RuntimeException("토큰 정보가 일치하지 않습니다")
-        }
-
-        return tokenProvider.createTokenDto(authentication,authority).also {
-            refreshTokenRepository.save(RefreshToken(userEmail, it.refreshToken))
-        }
+        return ResponseEntity(null,header, HttpStatus.OK)
     }
 
     fun getRefreshToken(userEmail : String) : RefreshToken

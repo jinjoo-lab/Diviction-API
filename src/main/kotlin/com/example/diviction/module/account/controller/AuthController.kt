@@ -3,6 +3,7 @@ package com.example.diviction.module.account.controller
 import com.example.diviction.module.account.dto.*
 import com.example.diviction.module.account.service.AuthService
 import com.example.diviction.security.constants.Authority
+import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
@@ -14,9 +15,9 @@ class AuthController(
     private val authService: AuthService
 ) {
     @PostMapping("/validate/token")
-    fun validateToken(token : String) : Boolean
+    fun validateToken(autoLoginDto: AutoLoginDto) : ResponseEntity<TokenDto?>
     {
-        return authService.validateToken(token)
+        return authService.refreshToken(autoLoginDto)
     }
 
     @PostMapping("/signUp/member")
@@ -37,21 +38,10 @@ class AuthController(
         authService.signUpCounselor(counselorDto)
     }
 
-    @PostMapping("signIn/counsleor")
+    @PostMapping("signIn/counselor")
     fun signInCounselor(@RequestBody loginDto: LoginDto): TokenDto
     {
         return authService.signInMember(loginDto.email,loginDto.password,loginDto.authority)
     }
 
-    @PostMapping("/refresh/member")
-    fun refreshTokenUser(@RequestBody refreshTokenDto: RefreshTokenDto) : TokenDto
-    {
-        return authService.refreshToken(refreshTokenDto.accessToken, refreshTokenDto.refreshToken,Authority.ROLE_USER)
-    }
-
-    @PostMapping("/refresh/counselor")
-    fun refreshTokenCounselor(@RequestBody refreshTokenDto: RefreshTokenDto) : TokenDto
-    {
-        return authService.refreshToken(refreshTokenDto.accessToken, refreshTokenDto.refreshToken,Authority.ROLE_USER)
-    }
 }

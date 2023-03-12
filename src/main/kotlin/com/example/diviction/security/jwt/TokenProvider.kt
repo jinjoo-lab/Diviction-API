@@ -3,10 +3,10 @@ package com.example.diviction.security.jwt
 
 
 import com.example.diviction.module.account.dto.TokenDto
+import com.example.diviction.module.account.dto.RecreateTokenDto
 import com.example.diviction.security.constants.Authority
 import com.example.diviction.security.entity.RefreshToken
 import com.example.diviction.security.repository.RefreshTokenRepository
-import com.example.diviction.security.service.MemberDetailService
 import io.jsonwebtoken.*
 import io.jsonwebtoken.io.Decoders
 import io.jsonwebtoken.security.Keys
@@ -17,8 +17,6 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication
 import org.springframework.security.core.GrantedAuthority
 import org.springframework.security.core.authority.SimpleGrantedAuthority
-import org.springframework.security.core.userdetails.User
-import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.stereotype.Component
 import java.security.Key
 import java.util.*
@@ -28,8 +26,6 @@ import kotlin.RuntimeException
 @Component
 class TokenProvider(
     @Value("\${jwt.secret}") secretKey : String,
-    private val memberDetailService : MemberDetailService,
-    private val counselorDetailService: MemberDetailService,
     private val refreshTokenRepository : RefreshTokenRepository
 ) {
     private val key: Key
@@ -37,8 +33,8 @@ class TokenProvider(
 
     companion object {
         // test
-        private const val ACCESS_TOKEN_EXPIRE_TIME: Long = (1000* 60 * 30).toLong() // 30minute * 60 * 30
-        private const val REFRESH_TOKEN_EXPIRE_TIME: Long = (1000 * 60 * 60 * 24 * 7).toLong() // 7days
+        private const val ACCESS_TOKEN_EXPIRE_TIME: Long = (1000* 60 * 30 ).toLong() // 30minute
+        private const val REFRESH_TOKEN_EXPIRE_TIME: Long = (1000* 60 * 60 * 24 * 7).toLong() // 7days
     }
 
     init {
@@ -78,7 +74,19 @@ class TokenProvider(
             accessExpired.time
         )
     }
+    fun createAccessToken(authentication: Authentication,role : Authority) : RecreateTokenDto
+    {
+        val now = Date().time
+        val accessExpired = Date(now + ACCESS_TOKEN_EXPIRE_TIME)
+        val accessToken: String = Jwts.builder()
+            .setSubject(authentication.name)
+            .claim("role", role)
+            .setExpiration(accessExpired)
+            .signWith(key, SignatureAlgorithm.HS512)
+            .compact()
 
+        return RecreateTokenDto(accessToken,accessExpired.time)
+    }
     fun createRefreshTokenDto(authentication: Authentication,role : Authority) : TokenDto
     {
         val now = Date().time
@@ -157,15 +165,25 @@ class TokenProvider(
             return true
         } catch (e: SecurityException) {
             logger.info("잘못된 JWT 서명입니다.")
+            return false
         } catch (e: MalformedJwtException) {
             logger.info("잘못된 JWT 서명입니다.")
+            return false
         } catch (e: UnsupportedJwtException) {
             logger.info("지원되지 않는 JWT 토큰입니다.")
+            return false
         } catch (e: IllegalArgumentException) {
             logger.info("JWT 토큰이 잘못되었습니다.")
+            return false
+        } catch (e : io.jsonwebtoken.security.SignatureException)
+        {
+            logger.info("토큰이 잘못되었습니다.")
+            return false
         }
+
         return false
     }
+
     fun parseClaims(accessToken : String) : Claims
     {
         return try{
