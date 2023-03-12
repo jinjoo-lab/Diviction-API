@@ -1,4 +1,4 @@
-drop database  diviction;
+drop database diviction;
 create database diviction;
 create table diviction.member
 (
@@ -80,15 +80,32 @@ create table diviction.refresh_token
     token_key   VARCHAR(64) PRIMARY KEY,
     token_value VARCHAR(512)
 );
+create table diviction.audit
+(
+    id      BIGINT AUTO_INCREMENT PRIMARY KEY,
+    user_id BIGINT      NOT NULL REFERENCES diviction.member (id),
+    date    VARCHAR(32) NOT NULL,
+    q1      INT         NOT NULL,
+    score   INT         NOT NULL
+);
+create table diviction.dass
+(
+    id               BIGINT AUTO_INCREMENT PRIMARY KEY,
+    user_id          BIGINT      NOT NULL REFERENCES diviction.member (id),
+    date             VARCHAR(32) NOT NULL,
+    melancholy_score INT         NOT NULL,
+    unrest_score     INT         NOT NULL,
+    stress_score     INT         NOT NULL
+);
 create table diviction.dast
 (
-    id BIGINT AUTO_INCREMENT PRIMARY KEY ,
-    user_id BIGINT not null ,
-    foreign key (user_id) references member(id),
-    date VARCHAR(32) not null ,
-    drug VARCHAR(512) not null ,
-    frequency BIGINT not null ,
-    injection BIGINT not null ,
-    cure BIGINT not null,
-    question BIGINT not null
+    id        BIGINT AUTO_INCREMENT PRIMARY KEY,
+    user_id   BIGINT       not null,
+    foreign key (user_id) references member (id),
+    date      VARCHAR(32)  not null,
+    drug      VARCHAR(512) not null,
+    frequency BIGINT       not null,
+    injection BIGINT       not null,
+    cure      BIGINT       not null,
+    question  BIGINT       not null
 )
