@@ -85,19 +85,33 @@ class AuthService(
         header.contentType = MediaType("application","json",Charsets.UTF_8)
 
         try {
-            if(!tokenProvider.validateToken(autoLoginDto.refreshToken))
+            if(!tokenProvider.validateToken(autoLoginDto.refreshToken)||!refreshTokenRepository.existsByTokenValue(autoLoginDto.refreshToken))
             {
-                println("wrong token")
+                println("wrong refresh token")
                 return ResponseEntity(null,header, HttpStatus.UNAUTHORIZED)
             }
         }catch (e : ExpiredJwtException)
         {
-            println("expired jwt exception")
+            println("expired refresh jwt exception")
             header.set("CODE","RTE")
             return ResponseEntity(null,header, HttpStatus.UNAUTHORIZED)
         }
 
-        return ResponseEntity(null,header, HttpStatus.UNAUTHORIZED)
+        try{
+            if(!tokenProvider.validateToken(autoLoginDto.accessToken))
+            {
+                println("wrong access token")
+                return ResponseEntity(null,header, HttpStatus.UNAUTHORIZED)
+            }
+        }catch (e : ExpiredJwtException)
+        {
+            println("expired access jwt exception")
+            val authentication = tokenProvider.getAuthentication(autoLoginDto.refreshToken)
+            val accessToken = tokenProvider.createAccessToken(authentication,autoLoginDto.authority)
+            return ResponseEntity(TokenDto(accessToken.accessToken,autoLoginDto.refreshToken,accessToken.expire),header, HttpStatus.OK)
+        }
+
+        return ResponseEntity(null,header, HttpStatus.OK)
     }
 
     fun getRefreshToken(userEmail : String) : RefreshToken

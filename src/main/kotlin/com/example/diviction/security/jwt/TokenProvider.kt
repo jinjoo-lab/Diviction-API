@@ -3,10 +3,10 @@ package com.example.diviction.security.jwt
 
 
 import com.example.diviction.module.account.dto.TokenDto
+import com.example.diviction.module.account.dto.RecreateTokenDto
 import com.example.diviction.security.constants.Authority
 import com.example.diviction.security.entity.RefreshToken
 import com.example.diviction.security.repository.RefreshTokenRepository
-import com.example.diviction.security.service.MemberDetailService
 import io.jsonwebtoken.*
 import io.jsonwebtoken.io.Decoders
 import io.jsonwebtoken.security.Keys
@@ -17,11 +17,8 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication
 import org.springframework.security.core.GrantedAuthority
 import org.springframework.security.core.authority.SimpleGrantedAuthority
-import org.springframework.security.core.userdetails.User
-import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.stereotype.Component
 import java.security.Key
-import java.security.SignatureException
 import java.util.*
 import kotlin.RuntimeException
 
@@ -36,7 +33,7 @@ class TokenProvider(
 
     companion object {
         // test
-        private const val ACCESS_TOKEN_EXPIRE_TIME: Long = (1000* 60 * 30).toLong() // 30minute
+        private const val ACCESS_TOKEN_EXPIRE_TIME: Long = (1000* 60 * 30 ).toLong() // 30minute
         private const val REFRESH_TOKEN_EXPIRE_TIME: Long = (1000* 60 * 60 * 24 * 7).toLong() // 7days
     }
 
@@ -77,7 +74,19 @@ class TokenProvider(
             accessExpired.time
         )
     }
+    fun createAccessToken(authentication: Authentication,role : Authority) : RecreateTokenDto
+    {
+        val now = Date().time
+        val accessExpired = Date(now + ACCESS_TOKEN_EXPIRE_TIME)
+        val accessToken: String = Jwts.builder()
+            .setSubject(authentication.name)
+            .claim("role", role)
+            .setExpiration(accessExpired)
+            .signWith(key, SignatureAlgorithm.HS512)
+            .compact()
 
+        return RecreateTokenDto(accessToken,accessExpired.time)
+    }
     fun createRefreshTokenDto(authentication: Authentication,role : Authority) : TokenDto
     {
         val now = Date().time
