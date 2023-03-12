@@ -1,6 +1,7 @@
 package com.example.diviction.module.dass.service
 
 import com.example.diviction.module.account.repository.MemberRepository
+import com.example.diviction.module.dass.dto.DassListResponse
 import com.example.diviction.module.dass.dto.DassSaveRequest
 import com.example.diviction.module.dass.entity.Dass
 import com.example.diviction.module.dass.repository.DassRepository
@@ -16,11 +17,41 @@ class DassService(
 ) {
     fun getDassList() = dassRepository.findAll()
 
-    fun getDassByMemberId(memberId: Long) = dassRepository.findByMemberId(memberId)
+    fun getDassByMemberId(memberId: Long) : List<DassListResponse> {
+        return dassRepository.findByMemberId(memberId).map { dass ->
+            DassListResponse(
+                    id = dass.id!!,
+                    melancholyScore = dass.melancholyScore!!,
+                    unrestScore = dass.unrestScore!!,
+                    stressScore = dass.stressScore!!,
+                    date = dass.date!!
+            )
+        }
+    }
 
-    fun getDassByDate(date: String) = dassRepository.findByDate(date)
+    fun getDassByDate(date: String) : List<DassListResponse>{
+        return dassRepository.findByDate(date).map { dass ->
+            DassListResponse(
+                    id = dass.id!!,
+                    melancholyScore = dass.melancholyScore!!,
+                    unrestScore = dass.unrestScore!!,
+                    stressScore = dass.stressScore!!,
+                    date = dass.date!!
+            )
+        }
+    }
 
-    fun getDassByMemberIdAndDate(memberId: Long, date: String) = dassRepository.findByMemberIdAndDate(memberId, date)
+    fun getDassByMemberIdAndDate(memberId: Long, date: String) : List<DassListResponse> {
+        return dassRepository.findByMemberIdAndDate(memberId, date).map { dass ->
+            DassListResponse(
+                    id = dass.id!!,
+                    melancholyScore = dass.melancholyScore!!,
+                    unrestScore = dass.unrestScore!!,
+                    stressScore = dass.stressScore!!,
+                    date = dass.date!!
+            )
+        }
+    }
 
     fun getDassDateByMemberId(memberId: Long) = dassRepository.findDateByMemberId(memberId)
 
