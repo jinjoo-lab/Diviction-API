@@ -21,6 +21,7 @@ import org.springframework.security.core.userdetails.User
 import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.stereotype.Component
 import java.security.Key
+import java.security.SignatureException
 import java.util.*
 import kotlin.RuntimeException
 
@@ -28,8 +29,6 @@ import kotlin.RuntimeException
 @Component
 class TokenProvider(
     @Value("\${jwt.secret}") secretKey : String,
-    private val memberDetailService : MemberDetailService,
-    private val counselorDetailService: MemberDetailService,
     private val refreshTokenRepository : RefreshTokenRepository
 ) {
     private val key: Key
@@ -37,8 +36,8 @@ class TokenProvider(
 
     companion object {
         // test
-        private const val ACCESS_TOKEN_EXPIRE_TIME: Long = (1000* 60 * 30).toLong() // 30minute * 60 * 30
-        private const val REFRESH_TOKEN_EXPIRE_TIME: Long = (1000 * 60 * 60 * 24 * 7).toLong() // 7days
+        private const val ACCESS_TOKEN_EXPIRE_TIME: Long = (1000* 60 * 30).toLong() // 30minute
+        private const val REFRESH_TOKEN_EXPIRE_TIME: Long = (1000* 60 * 60 * 24 * 7).toLong() // 7days
     }
 
     init {
@@ -157,15 +156,25 @@ class TokenProvider(
             return true
         } catch (e: SecurityException) {
             logger.info("잘못된 JWT 서명입니다.")
+            return false
         } catch (e: MalformedJwtException) {
             logger.info("잘못된 JWT 서명입니다.")
+            return false
         } catch (e: UnsupportedJwtException) {
             logger.info("지원되지 않는 JWT 토큰입니다.")
+            return false
         } catch (e: IllegalArgumentException) {
             logger.info("JWT 토큰이 잘못되었습니다.")
+            return false
+        } catch (e : io.jsonwebtoken.security.SignatureException)
+        {
+            logger.info("토큰이 잘못되었습니다.")
+            return false
         }
+
         return false
     }
+
     fun parseClaims(accessToken : String) : Claims
     {
         return try{
