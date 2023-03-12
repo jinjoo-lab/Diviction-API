@@ -86,5 +86,15 @@ create table diviction.dass(
     unrest_score INT NOT NULL ,
     stress_score INT NOT NULL
 );
-
-
+create table diviction.dast
+(
+    id BIGINT AUTO_INCREMENT PRIMARY KEY ,
+    user_id BIGINT not null ,
+    foreign key (user_id) references member(id),
+    date VARCHAR(32) not null ,
+    drug VARCHAR(512) not null ,
+    frequency BIGINT not null ,
+    injection BIGINT not null ,
+    cure BIGINT not null,
+    question BIGINT not null
+)
