@@ -12,13 +12,13 @@ class DrugService (
         ){
 
     fun saveDrug(drugRegistrationRequest: DrugRegistrationRequest) {
-        val drug = Drug(drugRegistrationRequest.name)
-        if (checkDrugDuplicate(drug.name)) {
+        if (checkDrugDuplicate(drugRegistrationRequest.name)) {
             throw IllegalArgumentException("이미 존재하는 약입니다.")
         }
-        else {
-            drugRepository.save(drug)
+        val drug = Drug().apply {
+            this.name = drugRegistrationRequest.name
         }
+        drugRepository.save(drug)
     }
 
     fun getDrugList(): List<Drug> {
