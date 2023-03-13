@@ -1,8 +1,8 @@
 package com.example.diviction.module.account.controller
 
+
 import com.example.diviction.module.account.dto.*
 import com.example.diviction.module.account.service.AuthService
-import com.example.diviction.security.constants.Authority
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
@@ -21,9 +21,9 @@ class AuthController(
     }
 
     @PostMapping("/signUp/member")
-    fun signUpMember(@RequestBody memberDto : MemberDto)
+    fun signUpMember(@RequestBody memberDto : MemberDto) : Long?
     {
-        authService.signUpMember(memberDto)
+        return authService.signUpMember(memberDto)
     }
 
     @PostMapping("signIn/member")
@@ -33,9 +33,9 @@ class AuthController(
     }
 
     @PostMapping("/signUp/counselor")
-    fun signUpCounselor(@RequestBody counselorDto: CounselorDto)
+    fun signUpCounselor(@RequestBody counselorDto: CounselorDto) : Long?
     {
-        authService.signUpCounselor(counselorDto)
+        return authService.signUpCounselor(counselorDto)
     }
 
     @PostMapping("signIn/counselor")
