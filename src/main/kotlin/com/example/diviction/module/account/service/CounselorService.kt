@@ -2,6 +2,7 @@ package com.example.diviction.module.account.service
 
 import com.example.diviction.module.account.dto.CounselorDto
 import com.example.diviction.module.account.dto.MatchResponseDto
+import com.example.diviction.module.account.dto.SignUpCounselorDto
 import com.example.diviction.module.account.entity.Counselor
 import com.example.diviction.module.account.repository.CounselorRepository
 import com.fasterxml.jackson.databind.RuntimeJsonMappingException
@@ -10,8 +11,8 @@ import org.springframework.transaction.annotation.Transactional
 
 @Service
 class CounselorService(private val counselorRepository: CounselorRepository) {
-
-    fun getCounselorByEmail(email : String) : CounselorDto
+    fun Counselor.toResponseDto() : SignUpCounselorDto = SignUpCounselorDto(id!!,email, password, name, birth, address, gender, profile_img_url, confirm)
+    fun getCounselorByEmail(email : String) : SignUpCounselorDto
     {
         var cur = counselorRepository.findByEmail(email)
 
@@ -19,7 +20,7 @@ class CounselorService(private val counselorRepository: CounselorRepository) {
         {
             var counselor : Counselor = cur.get()
 
-            return counselor.toDto()
+            return counselor.toResponseDto()
         }
 
         else{
@@ -27,7 +28,7 @@ class CounselorService(private val counselorRepository: CounselorRepository) {
         }
     }
 
-    fun getCounselorById(id : Long) : CounselorDto
+    fun getCounselorById(id : Long) : SignUpCounselorDto
     {
         var cur = counselorRepository.findById(id)
 
@@ -35,7 +36,7 @@ class CounselorService(private val counselorRepository: CounselorRepository) {
         {
             var counselor : Counselor = cur.get()
 
-            return counselor.toDto()
+            return counselor.toResponseDto()
         }
         else{
             throw RuntimeException("해당 Id의 상담사는 존재하지 않습니다.")
@@ -93,7 +94,7 @@ class CounselorService(private val counselorRepository: CounselorRepository) {
             var list = counselor.matching_list
 
             list.forEach {
-               re_list.add(MatchResponseDto(counselorEmail = it.counselor.email, patientEmail = it.patient.email))
+               re_list.add(MatchResponseDto(matchId = it.id, counselorId = it.counselor.id ,counselorEmail = it.counselor.email, patientId = it.patient.id, patientEmail = it.patient.email))
             }
 
             return re_list
@@ -107,14 +108,14 @@ class CounselorService(private val counselorRepository: CounselorRepository) {
        email, password, name, birth, address, gender, profile_img_url, confirm
     )
 
-    fun getAllCounselor() : List<CounselorDto>
+    fun getAllCounselor() : List<SignUpCounselorDto>
     {
         var counselor = counselorRepository.findAll()
 
-        var list : MutableList<CounselorDto> = mutableListOf()
+        var list : MutableList<SignUpCounselorDto> = mutableListOf()
 
         counselor.forEach {
-            list.add(it.toDto())
+            list.add(it.toResponseDto())
         }
 
         return list
