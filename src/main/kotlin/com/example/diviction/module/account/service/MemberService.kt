@@ -1,22 +1,21 @@
 package com.example.diviction.module.account.service
 
-import com.example.diviction.module.account.dto.MatchDto
 import com.example.diviction.module.account.dto.MatchResponseDto
 import com.example.diviction.module.account.dto.MemberDto
-import com.example.diviction.module.account.entity.Matching
+import com.example.diviction.module.account.dto.SignUpMemberDto
 import com.example.diviction.module.account.entity.Member
 import com.example.diviction.module.account.repository.MemberRepository
 import org.springframework.stereotype.Service
 
 @Service
 class MemberService(private val memberRepository: MemberRepository){
-    fun getMemberById(id : Long) : MemberDto{
+    fun getMemberById(id : Long) : SignUpMemberDto{
         val member = memberRepository.getById(id)
 
-        return member.toDto()
+        return member.toResponseDto()
     }
 
-    fun getMember(email : String) : MemberDto
+    fun getMemberByEamil(email : String) : SignUpMemberDto
     {
         val cur = memberRepository.findByEmail(email)
 
@@ -24,14 +23,14 @@ class MemberService(private val memberRepository: MemberRepository){
         {
             val member = cur.get()
 
-            return member.toDto()
+            return member.toResponseDto()
         }
         else{
             throw RuntimeException("해당 이메일의 사용자는 존재하지 않습니다.")
         }
     }
 
-    fun getMatchById(id : Long) : MatchResponseDto
+    fun getMatchById(id : Long) : MatchResponseDto?
     {
         var cur = memberRepository.findById(id)
 
@@ -42,11 +41,11 @@ class MemberService(private val memberRepository: MemberRepository){
 
             if(match!=null)
             {
-                return MatchResponseDto(counselorEmail = match.counselor.email, patientEmail = match.patient.email)
+                return MatchResponseDto(matchId = match.id, counselorId = match.counselor.id,counselorEmail = match.counselor.email,patientId = match.patient.id ,patientEmail = match.patient.email)
             }
         }
 
-        throw RuntimeException()
+        return null
     }
 
     fun deleteMember(id : Long)
@@ -57,4 +56,18 @@ class MemberService(private val memberRepository: MemberRepository){
     fun Member.toDto() : MemberDto = MemberDto(
         email, password, name, birth, address, gender, profile_img_url
     )
+
+    fun Member.toResponseDto() : SignUpMemberDto = SignUpMemberDto(id!!,email, password, name, birth, address, gender, profile_img_url)
+
+    fun getAllMember() : List<SignUpMemberDto>
+    {
+        val members = memberRepository.findAll()
+        val list : MutableList<SignUpMemberDto> = mutableListOf()
+
+        members.forEach {
+            list.add(it.toResponseDto())
+        }
+
+        return list
+    }
 }

@@ -8,5 +8,5 @@ import org.springframework.data.jpa.repository.JpaRepository
 
 interface ConsultingRepository : JpaRepository<Consulting, Long> {
 
-    fun findByConsultPatientOrderByDate(patient : Member, pageable: Pageable) : Page<Consulting>?
+    fun findByConsultPatientOrderByDateDesc(patient : Member, pageable: Pageable) : Page<Consulting>?
 }

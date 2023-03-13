@@ -25,7 +25,7 @@ class MatchService(
 
 
     @Transactional
-    fun saveMatch(matchDto : MatchDto)
+    fun saveMatch(matchDto : MatchDto) : MatchResponseDto
     {
         var curPatient = memberRepository.findById(matchDto.patientId)
         var curCounselor = counselorRepository.findById(matchDto.counselorId)
@@ -43,7 +43,9 @@ class MatchService(
                 var match : Matching = Matching(patient = patient,counselor = counselor)
                 patient.matching = match
                 counselor.matching_list.add(match)
-                matchRepository.save(match)
+                val cur = matchRepository.save(match)
+
+                return MatchResponseDto(cur.id,cur.counselor.id,cur.counselor.email,cur.patient.id,cur.counselor.email)
             }
         }
 
@@ -60,7 +62,7 @@ class MatchService(
         {
             var match = cur.get()
 
-            return MatchResponseDto(counselorEmail = match.counselor.email, patientEmail = match.patient.email)
+            return MatchResponseDto(matchId = match.id, counselorId = match.counselor.id ,counselorEmail = match.counselor.email,patientId = match.patient.id ,patientEmail = match.patient.email)
         }
 
         else{
@@ -68,5 +70,21 @@ class MatchService(
         }
     }
 
+    fun getAllMatch() : List<MatchResponseDto>
+    {
+        val match = matchRepository.findAll()
 
+        val list : MutableList<MatchResponseDto> = mutableListOf()
+
+        match.forEach {
+            list.add(MatchResponseDto(it.id,it.counselor.id,it.counselor.email,it.patient.id,it.patient.email))
+        }
+
+        return list
+    }
+
+    fun deleteMatch(id : Long)
+    {
+        matchRepository.deleteById(id)
+    }
 }

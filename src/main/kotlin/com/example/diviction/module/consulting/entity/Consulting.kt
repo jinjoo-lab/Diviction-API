@@ -2,8 +2,10 @@ package com.example.diviction.module.consulting.entity
 
 import com.example.diviction.module.account.entity.Counselor
 import com.example.diviction.module.account.entity.Member
+import com.fasterxml.jackson.annotation.JsonFormat
 import lombok.Getter
 import org.springframework.format.annotation.DateTimeFormat
+import java.time.LocalDate
 import javax.persistence.*
 import javax.validation.constraints.NotBlank
 import javax.validation.constraints.Pattern
@@ -23,9 +25,8 @@ class Consulting(
     @field: NotBlank
     var content : String,
 
-    @field: NotBlank
-    @field: Pattern(regexp = "^([12]\\d{3}-(0[1-9]|1[0-2])-(0[1-9]|[12]\\d|3[01]))$")
-    var date : String
+    @field: JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
+    var date : LocalDate
 ){
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
