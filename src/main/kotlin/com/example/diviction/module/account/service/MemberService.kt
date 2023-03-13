@@ -31,7 +31,7 @@ class MemberService(private val memberRepository: MemberRepository){
         }
     }
 
-    fun getMatchById(id : Long) : MatchResponseDto
+    fun getMatchById(id : Long) : MatchResponseDto?
     {
         var cur = memberRepository.findById(id)
 
@@ -46,7 +46,7 @@ class MemberService(private val memberRepository: MemberRepository){
             }
         }
 
-        throw RuntimeException()
+        return null
     }
 
     fun deleteMember(id : Long)
@@ -57,4 +57,16 @@ class MemberService(private val memberRepository: MemberRepository){
     fun Member.toDto() : MemberDto = MemberDto(
         email, password, name, birth, address, gender, profile_img_url
     )
+
+    fun getAllMember() : List<MemberDto>
+    {
+        val members = memberRepository.findAll()
+        val list : MutableList<MemberDto> = mutableListOf()
+
+        members.forEach {
+            list.add(it.toDto())
+        }
+
+        return list
+    }
 }

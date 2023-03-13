@@ -27,4 +27,10 @@ class MatchController(@Autowired private val matchService: MatchService) {
     {
         return matchService.patientDuplication(id)
     }
+
+    @GetMapping("/all")
+    fun gelAllMatch() : List<MatchResponseDto>
+    {
+        return matchService.getAllMatch()
+    }
 }

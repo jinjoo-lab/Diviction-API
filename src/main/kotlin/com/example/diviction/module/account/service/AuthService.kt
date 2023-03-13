@@ -36,14 +36,16 @@ class AuthService(
 ) {
     private val logger = LoggerFactory.getLogger(AuthService::class.java)
 
-    fun signUpMember(memberDto : MemberDto)
+    fun signUpMember(memberDto : MemberDto) : Long?
     {
         val member : Member = Member(
             memberDto.email,passwordEncoder.encode(memberDto.password),memberDto.name,memberDto.birth,memberDto.address,
             memberDto.gender,memberDto.profile_img_url,Authority.ROLE_USER
         )
 
-        memberRepository.save(member)
+        val result = memberRepository.save(member)
+
+        return result.id
     }
 
     fun signInMember(email  : String, password : String,role : Authority) : TokenDto
@@ -68,7 +70,7 @@ class AuthService(
         }
     }
 
-    fun signUpCounselor(counselorDto: CounselorDto)
+    fun signUpCounselor(counselorDto: CounselorDto) : Long?
     {
         val counselor : Counselor = Counselor(
             counselorDto.email,passwordEncoder.encode(counselorDto.password),counselorDto.name,counselorDto.birth,
@@ -76,9 +78,11 @@ class AuthService(
             Authority.ROLE_COUNSELOR
         )
 
-        counselorRepository.save(counselor)
-    }
+        val result = counselorRepository.save(counselor)
 
+        return result.id
+    }
+    // header에 보내도록 수정
     fun refreshToken(autoLoginDto: AutoLoginDto) : ResponseEntity<TokenDto?>
     {
         var header : HttpHeaders = HttpHeaders()
@@ -108,7 +112,9 @@ class AuthService(
             println("expired access jwt exception")
             val authentication = tokenProvider.getAuthentication(autoLoginDto.refreshToken)
             val accessToken = tokenProvider.createAccessToken(authentication,autoLoginDto.authority)
-            return ResponseEntity(TokenDto(accessToken.accessToken,autoLoginDto.refreshToken,accessToken.expire),header, HttpStatus.OK)
+            header.set("Authorization","Bearer "+accessToken.accessToken)
+            header.set("RT",autoLoginDto.refreshToken)
+            return ResponseEntity(null,header, HttpStatus.OK)
         }
 
         return ResponseEntity(null,header, HttpStatus.OK)

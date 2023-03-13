@@ -99,11 +99,24 @@ class CounselorService(private val counselorRepository: CounselorRepository) {
             return re_list
         }
         else{
-            throw RuntimeException()
+           return re_list
         }
     }
 
     fun Counselor.toDto() : CounselorDto = CounselorDto(
         email, password, name, birth, address, gender, profile_img_url, confirm
     )
+
+    fun getAllCounselor() : List<CounselorDto>
+    {
+        var counselor = counselorRepository.findAll()
+
+        var list : MutableList<CounselorDto> = mutableListOf()
+
+        counselor.forEach {
+            list.add(it.toDto())
+        }
+
+        return list
+    }
 }

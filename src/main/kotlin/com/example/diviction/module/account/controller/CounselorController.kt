@@ -8,7 +8,6 @@ import org.springframework.web.bind.annotation.*
 @RestController
 @RequestMapping("/counselor")
 class CounselorController(private val counselorService: CounselorService) {
-
     @GetMapping("/id/{counselorId}")
     fun getCounselorById(@PathVariable(name = "counselorId") id : Long) : CounselorDto
     {
@@ -43,5 +42,11 @@ class CounselorController(private val counselorService: CounselorService) {
     fun getMatchListById(id :Long) : List<MatchResponseDto>
     {
         return counselorService.getMatchListById(id)
+    }
+
+    @GetMapping("/all")
+    fun getAllCounselor() : List<CounselorDto>
+    {
+        return counselorService.getAllCounselor()
     }
 }

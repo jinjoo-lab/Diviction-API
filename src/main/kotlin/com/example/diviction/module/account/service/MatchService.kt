@@ -68,5 +68,17 @@ class MatchService(
         }
     }
 
+    fun getAllMatch() : List<MatchResponseDto>
+    {
+        val match = matchRepository.findAll()
+
+        val list : MutableList<MatchResponseDto> = mutableListOf()
+
+        match.forEach {
+            list.add(MatchResponseDto(it.counselor.email,it.patient.email))
+        }
+
+        return list
+    }
 
 }

@@ -85,7 +85,7 @@ class TokenProvider(
             .signWith(key, SignatureAlgorithm.HS512)
             .compact()
 
-        return RecreateTokenDto(accessToken,accessExpired.time)
+        return RecreateTokenDto("Bearer "+accessToken,accessExpired.time)
     }
     fun createRefreshTokenDto(authentication: Authentication,role : Authority) : TokenDto
     {
