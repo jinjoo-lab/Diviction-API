@@ -35,11 +35,12 @@ class ConsultingService(
 
     }
 
+    @Transactional
     fun getConsultingLogByPatientId(patient_id : Long) : List<ConsultResponseDto>
     {
         var member = memberRepository.getById(patient_id)
 
-        var page = consultingRepository.findByConsultPatientOrderByDate(member, Pageable.ofSize(10))
+        var page = consultingRepository.findByConsultPatientOrderByDateDesc(member, Pageable.ofSize(10))
 
         var list = page?.content ?: null
 
@@ -47,7 +48,7 @@ class ConsultingService(
 
         if(list==null)
         {
-            throw RuntimeException("해당 환자의 상담 기록은 존재하지 않습니다.")
+            return result
         }
 
         list.stream().forEach {
@@ -56,12 +57,12 @@ class ConsultingService(
 
         return result
     }
-
+    @Transactional
     fun getConsultingLogByPatientEmail(patient_email : String) : List<ConsultResponseDto>
     {
         var member = memberRepository.getByEmail(patient_email)
 
-        var page = consultingRepository.findByConsultPatientOrderByDate(member!!, Pageable.ofSize(10))
+        var page = consultingRepository.findByConsultPatientOrderByDateDesc(member!!, Pageable.ofSize(10))
 
         var list = page?.content ?: null
 
@@ -69,7 +70,7 @@ class ConsultingService(
 
         if(list==null)
         {
-            throw RuntimeException("해당 환자의 상담 기록은 존재하지 않습니다.")
+            return result
         }
 
         list.stream().forEach {
@@ -91,7 +92,7 @@ class ConsultingService(
     }
 
     fun Consulting.toResponseDto() = ConsultResponseDto(
-        consultCounselor.id!!,content,date
+        consultCounselor.id!!,consultPatient.id!!,content,date
     )
 
 }
