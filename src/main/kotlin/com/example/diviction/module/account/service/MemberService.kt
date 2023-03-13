@@ -16,7 +16,7 @@ class MemberService(private val memberRepository: MemberRepository){
         return member.toDto()
     }
 
-    fun getMember(email : String) : MemberDto
+    fun getMemberByEamil(email : String) : MemberDto
     {
         val cur = memberRepository.findByEmail(email)
 

@@ -3,19 +3,13 @@ package com.example.diviction.module.account.entity
 import com.example.diviction.module.DAST.entity.Dast
 import com.example.diviction.module.checklist.entity.CheckList
 import com.example.diviction.module.constant.Gender
-import com.example.diviction.module.consulting.dto.ConsultResponseDto
 import com.example.diviction.module.consulting.entity.Consulting
 import com.example.diviction.module.diagnosis.entity.DiagnosisResult
 import com.example.diviction.security.constants.Authority
 import com.fasterxml.jackson.annotation.JsonProperty
 import lombok.Getter
 import lombok.ToString
-import org.springframework.format.annotation.DateTimeFormat
-import org.springframework.security.core.GrantedAuthority
-import org.springframework.security.core.userdetails.UserDetails
-import org.springframework.validation.annotation.Validated
 import javax.persistence.*
-import javax.validation.Valid
 import javax.validation.constraints.Email
 import javax.validation.constraints.NotBlank
 import javax.validation.constraints.Pattern
@@ -54,7 +48,7 @@ class Member(
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     val id: Long? = null
 
-    @OneToOne(fetch = FetchType.LAZY, mappedBy = "patient", cascade = [CascadeType.REMOVE], orphanRemoval = true)
+    @OneToOne(mappedBy = "patient", cascade = [CascadeType.REMOVE], orphanRemoval = true)
     var matching: Matching? = null
 
     @OneToMany(mappedBy = "member", cascade = [CascadeType.REMOVE], orphanRemoval = true)

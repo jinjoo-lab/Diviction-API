@@ -18,7 +18,13 @@ import javax.validation.Valid
 @RestController
 @RequestMapping("/member")
 class MemberController (private val memberService: MemberService){
+    @GetMapping("/get/email/{user_email}")
+    fun getMemberByEamil(@PathVariable user_email : String) : MemberDto
+    {
+        val result : MemberDto = memberService.getMemberByEamil(user_email)
 
+        return result
+    }
     @GetMapping("/get/{userId}")
     fun getMemberById(@PathVariable userId : Long) : MemberDto
     {

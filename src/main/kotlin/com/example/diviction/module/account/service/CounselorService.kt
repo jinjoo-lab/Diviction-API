@@ -104,7 +104,7 @@ class CounselorService(private val counselorRepository: CounselorRepository) {
     }
 
     fun Counselor.toDto() : CounselorDto = CounselorDto(
-        email, password, name, birth, address, gender, profile_img_url, confirm
+       email, password, name, birth, address, gender, profile_img_url, confirm
     )
 
     fun getAllCounselor() : List<CounselorDto>

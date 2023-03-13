@@ -3,7 +3,7 @@ create database diviction;
 create table diviction.member
 (
     id              BIGINT AUTO_INCREMENT PRIMARY KEY,
-    email           VARCHAR(64)  NOT NULL,
+    email           VARCHAR(64)  NOT NULL UNIQUE ,
     password        VARCHAR(128) NOT NULL,
     name            VARCHAR(32)  NOT NULL,
     birth           VARCHAR(64)  NOT NULL,
@@ -15,7 +15,7 @@ create table diviction.member
 create table diviction.counselor
 (
     id              BIGINT AUTO_INCREMENT PRIMARY KEY,
-    email           VARCHAR(64)  NOT NULL,
+    email           VARCHAR(64)  NOT NULL UNIQUE ,
     password        VARCHAR(128) NOT NULL,
     name            VARCHAR(32)  NOT NULL,
     birth           VARCHAR(64)  NOT NULL,
@@ -108,4 +108,5 @@ create table diviction.dast
     injection BIGINT       not null,
     cure      BIGINT       not null,
     question  BIGINT       not null
-)
+);
+#create index member_email_index USING HASH ON diviction.member(email)

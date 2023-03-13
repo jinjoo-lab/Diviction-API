@@ -1,9 +1,6 @@
 package com.example.diviction.module.account.service
 
-import com.example.diviction.module.account.dto.AutoLoginDto
-import com.example.diviction.module.account.dto.CounselorDto
-import com.example.diviction.module.account.dto.MemberDto
-import com.example.diviction.module.account.dto.TokenDto
+import com.example.diviction.module.account.dto.*
 import com.example.diviction.module.account.entity.Counselor
 import com.example.diviction.module.account.entity.Member
 import com.example.diviction.module.account.repository.CounselorRepository
@@ -13,7 +10,6 @@ import com.example.diviction.security.entity.RefreshToken
 import com.example.diviction.security.jwt.TokenProvider
 import com.example.diviction.security.repository.RefreshTokenRepository
 import io.jsonwebtoken.ExpiredJwtException
-import io.jsonwebtoken.security.SignatureException
 import org.slf4j.LoggerFactory
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
@@ -35,8 +31,9 @@ class AuthService(
     private val passwordEncoder: PasswordEncoder
 ) {
     private val logger = LoggerFactory.getLogger(AuthService::class.java)
-
-    fun signUpMember(memberDto : MemberDto) : Long?
+    fun Member.toResponseDto() : SignUpMemberDto = SignUpMemberDto(id!!,email, password, name, birth, address, gender, profile_img_url)
+    fun Counselor.toResponseDto() : SignUpCounselorDto = SignUpCounselorDto(id!!,email, password, name, birth, address, gender, profile_img_url, confirm)
+    fun signUpMember(memberDto : MemberDto) : SignUpMemberDto
     {
         val member : Member = Member(
             memberDto.email,passwordEncoder.encode(memberDto.password),memberDto.name,memberDto.birth,memberDto.address,
@@ -45,7 +42,7 @@ class AuthService(
 
         val result = memberRepository.save(member)
 
-        return result.id
+        return result.toResponseDto()
     }
 
     fun signInMember(email  : String, password : String,role : Authority) : TokenDto
@@ -70,7 +67,7 @@ class AuthService(
         }
     }
 
-    fun signUpCounselor(counselorDto: CounselorDto) : Long?
+    fun signUpCounselor(counselorDto: CounselorDto) : SignUpCounselorDto
     {
         val counselor : Counselor = Counselor(
             counselorDto.email,passwordEncoder.encode(counselorDto.password),counselorDto.name,counselorDto.birth,
@@ -80,7 +77,7 @@ class AuthService(
 
         val result = counselorRepository.save(counselor)
 
-        return result.id
+        return result.toResponseDto()
     }
     // header에 보내도록 수정
     fun refreshToken(autoLoginDto: AutoLoginDto) : ResponseEntity<TokenDto?>
@@ -123,5 +120,27 @@ class AuthService(
     fun getRefreshToken(userEmail : String) : RefreshToken
     {
         return refreshTokenRepository.getById(userEmail)
+    }
+
+    fun checkEmailDuplication(email : String,role : Authority) : Boolean
+    {
+        if(role.equals(Authority.ROLE_USER))
+        {
+            if(memberRepository.existsByEmail(email)){
+                return false}
+
+            else
+            {return true}
+        }
+
+        else if(role.equals(Authority.ROLE_COUNSELOR))
+        {
+            if(counselorRepository.existsByEmail(email)) {
+                return false
+            }
+            else {return true}
+        }
+
+        return false
     }
 }
