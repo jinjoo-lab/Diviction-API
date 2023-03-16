@@ -45,26 +45,31 @@ class AuthService(
         return result.toResponseDto()
     }
 
-    fun signInMember(email  : String, password : String,role : Authority) : TokenDto
+    fun signInMember(email  : String, password : String,role : Authority) : TokenResult
     {
         logger.info("member login start")
         val credit = UsernamePasswordAuthenticationToken(email,password)
         val authentication = authenticationManagerBuilder.`object`.authenticate(credit)
         logger.info("authentication : " + authentication.toString())
-        return tokenProvider.createTokenDto(authentication,role).also{
+
+        val token = tokenProvider.createTokenDto(authentication,role).also{
             refreshTokenRepository.save(RefreshToken(email,it.refreshToken))
         }
+
+        return TokenResult(authentication.name,token)
     }
 
-    fun signInCounselor(email  : String, password : String,role : Authority) : TokenDto
+    fun signInCounselor(email  : String, password : String,role : Authority) : TokenResult
     {
         logger.info("counselor login start")
         val credit = UsernamePasswordAuthenticationToken(email,password)
         val authentication = authenticationManagerBuilder.`object`.authenticate(credit)
         logger.info("authentication : " + authentication.toString())
-        return tokenProvider.createTokenDto(authentication,role).also{
+        val token =  tokenProvider.createTokenDto(authentication,role).also{
             refreshTokenRepository.save(RefreshToken(email,it.refreshToken))
         }
+
+        return TokenResult(authentication.name,token)
     }
 
     fun signUpCounselor(counselorDto: CounselorDto) : SignUpCounselorDto

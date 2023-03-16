@@ -55,7 +55,7 @@ class JwtFilter(private val tokenProvider: TokenProvider) : OncePerRequestFilter
                         // 새로운 토큰 생성
 
                         response.setHeader(REFRESH_TOKEN, reTokenDto.refreshToken)
-                        response.setHeader(AUTHORIZATION_HEADER, "Bearer " + reTokenDto.accessToken)
+                        response.setHeader(AUTHORIZATION_HEADER, "Bearer "+reTokenDto.accessToken)
                         SecurityContextHolder.getContext().authentication = reauthentication
 
                         // 200 성공 (헤더 : 새로운 토큰 , 바디 : 사용자 요청한 내용)

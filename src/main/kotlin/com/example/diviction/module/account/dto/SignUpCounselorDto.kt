@@ -1,6 +1,8 @@
 package com.example.diviction.module.account.dto
 
 import com.example.diviction.module.constant.Gender
+import javax.persistence.EnumType
+import javax.persistence.Enumerated
 
 data class SignUpCounselorDto (
     var id : Long?,
@@ -15,6 +17,7 @@ data class SignUpCounselorDto (
 
     var address : String,
 
+    @Enumerated(EnumType.STRING)
     var gender : Gender,
 
     var profile_img_url : String,
