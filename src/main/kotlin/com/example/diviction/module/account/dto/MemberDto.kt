@@ -19,6 +19,7 @@ data class MemberDto(
 
     var address : String,
 
+    @Enumerated(EnumType.STRING)
     var gender : Gender,
 
     var profile_img_url : String

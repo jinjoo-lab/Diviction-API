@@ -30,7 +30,7 @@ class SecurityConfiguration(
             .and()
             .authorizeRequests()
             .antMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html", "/swagger-resources/**").permitAll()
-            .antMatchers("/auth/**").permitAll()
+            .antMatchers("/auth/**", "/**").permitAll()
             .anyRequest().authenticated()
             .and()
             .apply(JwtSecurityConfiguration(tokenProvider))
