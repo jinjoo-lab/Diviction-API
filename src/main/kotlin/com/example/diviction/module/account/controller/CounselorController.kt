@@ -1,8 +1,7 @@
 package com.example.diviction.module.account.controller
 
-import com.example.diviction.module.account.dto.CounselorDto
 import com.example.diviction.module.account.dto.MatchResponseDto
-import com.example.diviction.module.account.dto.SignUpCounselorDto
+import com.example.diviction.module.account.dto.ResponseCounselorDto
 import com.example.diviction.module.account.service.CounselorService
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.tags.Tag
@@ -13,13 +12,13 @@ import org.springframework.web.bind.annotation.*
 class CounselorController(private val counselorService: CounselorService) {
     @Operation(description = "상담자 id(Long)으로 조회")
     @GetMapping("/id/{counselorId}")
-    fun getCounselorById(@PathVariable(name = "counselorId") id : Long) : SignUpCounselorDto
+    fun getCounselorById(@PathVariable(name = "counselorId") id : Long) : ResponseCounselorDto
     {
         return counselorService.getCounselorById(id)
     }
     @Operation(description = "상담자 email로 조회")
     @GetMapping("/email/{email}")
-    fun getCounselorByEmail(@PathVariable email : String) : SignUpCounselorDto
+    fun getCounselorByEmail(@PathVariable email : String) : ResponseCounselorDto
     {
         return counselorService.getCounselorByEmail(email)
     }
@@ -51,7 +50,7 @@ class CounselorController(private val counselorService: CounselorService) {
 
     @Operation(description = "모든 상담자의 정보(리스트) 반환, 없을 경우 빈 리스트 , 실제 서비스 시 잠궈야 함")
     @GetMapping("/all")
-    fun getAllCounselor() : List<SignUpCounselorDto>
+    fun getAllCounselor() : List<ResponseCounselorDto>
     {
         return counselorService.getAllCounselor()
     }

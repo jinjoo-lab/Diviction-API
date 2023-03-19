@@ -1,29 +1,23 @@
 package com.example.diviction.module.account.controller
 
-import com.example.diviction.module.account.dto.MatchDto
 import com.example.diviction.module.account.dto.MatchResponseDto
-import com.example.diviction.module.account.dto.MemberDto
-import com.example.diviction.module.account.dto.SignUpMemberDto
-import com.example.diviction.module.account.entity.Matching
-import com.example.diviction.module.account.entity.Member
+import com.example.diviction.module.account.dto.ResponseMemberDto
 import com.example.diviction.module.account.service.MemberService
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.tags.Tag
-import org.springframework.validation.annotation.Validated
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
-import org.springframework.web.bind.annotation.PostMapping
-import org.springframework.web.bind.annotation.RequestBody
+import org.springframework.web.bind.annotation.RequestHeader
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
-import javax.validation.Valid
+
 @Tag(name = "Member", description = "중독자 조회 및 접근")
 @RestController
 @RequestMapping("/member")
 class MemberController (private val memberService: MemberService){
     @Operation(description = "중독자의 email로 조회 , 없을 경우 500 Error")
     @GetMapping("/get/email/{user_email}")
-    fun getMemberByEamil(@PathVariable user_email : String) : SignUpMemberDto
+    fun getMemberByEamil(@PathVariable user_email : String) : ResponseMemberDto
     {
         val result  = memberService.getMemberByEamil(user_email)
 
@@ -32,7 +26,7 @@ class MemberController (private val memberService: MemberService){
 
     @Operation(description = "중독자의 pk(long)으로 조회 , 없을 경우 500 error")
     @GetMapping("/get/{userId}")
-    fun getMemberById(@PathVariable userId : Long) : SignUpMemberDto
+    fun getMemberById(@PathVariable userId : Long) : ResponseMemberDto
     {
         val result  = memberService.getMemberById(userId)
 
@@ -52,7 +46,7 @@ class MemberController (private val memberService: MemberService){
     }
     @Operation(description = "모든 중독자 조회 리스트 반환 ( 없을 경우 빈 리스트 ) ")
     @GetMapping("/all")
-    fun getAllMember() : List<SignUpMemberDto>
+    fun getAllMember(@RequestHeader(name = "RT") header : String) : List<ResponseMemberDto>
     {
         return memberService.getAllMember()
     }

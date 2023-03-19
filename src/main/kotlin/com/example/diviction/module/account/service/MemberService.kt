@@ -1,21 +1,20 @@
 package com.example.diviction.module.account.service
 
 import com.example.diviction.module.account.dto.MatchResponseDto
-import com.example.diviction.module.account.dto.MemberDto
-import com.example.diviction.module.account.dto.SignUpMemberDto
+import com.example.diviction.module.account.dto.ResponseMemberDto
 import com.example.diviction.module.account.entity.Member
 import com.example.diviction.module.account.repository.MemberRepository
 import org.springframework.stereotype.Service
 
 @Service
 class MemberService(private val memberRepository: MemberRepository){
-    fun getMemberById(id : Long) : SignUpMemberDto{
+    fun getMemberById(id : Long) : ResponseMemberDto{
         val member = memberRepository.getById(id)
 
         return member.toResponseDto()
     }
 
-    fun getMemberByEamil(email : String) : SignUpMemberDto
+    fun getMemberByEamil(email : String) : ResponseMemberDto
     {
         val cur = memberRepository.findByEmail(email)
 
@@ -53,16 +52,12 @@ class MemberService(private val memberRepository: MemberRepository){
         memberRepository.deleteById(id)
     }
 
-    fun Member.toDto() : MemberDto = MemberDto(
-        email, password, name, birth, address, gender, profile_img_url
-    )
+    fun Member.toResponseDto() : ResponseMemberDto = ResponseMemberDto(id!!,email, password, name, birth, address, gender, profile_img_url)
 
-    fun Member.toResponseDto() : SignUpMemberDto = SignUpMemberDto(id!!,email, password, name, birth, address, gender, profile_img_url)
-
-    fun getAllMember() : List<SignUpMemberDto>
+    fun getAllMember() : List<ResponseMemberDto>
     {
         val members = memberRepository.findAll()
-        val list : MutableList<SignUpMemberDto> = mutableListOf()
+        val list : MutableList<ResponseMemberDto> = mutableListOf()
 
         members.forEach {
             list.add(it.toResponseDto())

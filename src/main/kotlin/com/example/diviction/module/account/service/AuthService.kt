@@ -19,6 +19,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Service
+import org.springframework.web.multipart.MultipartFile
 
 
 @Service
@@ -27,17 +28,29 @@ class AuthService(
     private val counselorRepository: CounselorRepository,
     private val refreshTokenRepository: RefreshTokenRepository,
     private val tokenProvider: TokenProvider,
-    private val authenticationManagerBuilder : AuthenticationManagerBuilder,
+    private val authenticationManagerBuilder: AuthenticationManagerBuilder,
     private val passwordEncoder: PasswordEncoder
 ) {
     private val logger = LoggerFactory.getLogger(AuthService::class.java)
-    fun Member.toResponseDto() : SignUpMemberDto = SignUpMemberDto(id!!,email, password, name, birth, address, gender, profile_img_url)
-    fun Counselor.toResponseDto() : SignUpCounselorDto = SignUpCounselorDto(id!!,email, password, name, birth, address, gender, profile_img_url, confirm)
-    fun signUpMember(memberDto : MemberDto) : SignUpMemberDto
-    {
-        val member : Member = Member(
-            memberDto.email,passwordEncoder.encode(memberDto.password),memberDto.name,memberDto.birth,memberDto.address,
-            memberDto.gender,memberDto.profile_img_url,Authority.ROLE_USER
+    fun Member.toResponseDto(): ResponseMemberDto =
+        ResponseMemberDto(id!!, email, password, name, birth, address, gender, profile_img_url)
+
+    fun Counselor.toResponseDto(): ResponseCounselorDto =
+        ResponseCounselorDto(id!!, email, password, name, birth, address, gender, profile_img_url, confirm)
+
+    fun signUpMember(requestMemberDto: RequestMemberDto, multipartFile: MultipartFile): ResponseMemberDto {
+
+        // 저장 후 아래 "" (profile_img_url) 채우기
+
+        val member: Member = Member(
+            requestMemberDto.email,
+            passwordEncoder.encode(requestMemberDto.password),
+            requestMemberDto.name,
+            requestMemberDto.birth,
+            requestMemberDto.address,
+            requestMemberDto.gender,
+            "",
+            Authority.ROLE_USER
         )
 
         val result = memberRepository.save(member)
@@ -45,38 +58,44 @@ class AuthService(
         return result.toResponseDto()
     }
 
-    fun signInMember(email  : String, password : String,role : Authority) : TokenResult
-    {
+    fun signInMember(email: String, password: String, role: Authority): TokenResult {
         logger.info("member login start")
-        val credit = UsernamePasswordAuthenticationToken(email,password)
+        val credit = UsernamePasswordAuthenticationToken(email, password)
         val authentication = authenticationManagerBuilder.`object`.authenticate(credit)
         logger.info("authentication : " + authentication.toString())
 
-        val token = tokenProvider.createTokenDto(authentication,role).also{
-            refreshTokenRepository.save(RefreshToken(email,it.refreshToken))
+        val token = tokenProvider.createTokenDto(authentication, role).also {
+            refreshTokenRepository.save(RefreshToken(email, it.refreshToken))
         }
 
-        return TokenResult(authentication.name,token)
+        return TokenResult(authentication.name, token)
     }
 
-    fun signInCounselor(email  : String, password : String,role : Authority) : TokenResult
-    {
+    fun signInCounselor(email: String, password: String, role: Authority): TokenResult {
         logger.info("counselor login start")
-        val credit = UsernamePasswordAuthenticationToken(email,password)
+        val credit = UsernamePasswordAuthenticationToken(email, password)
         val authentication = authenticationManagerBuilder.`object`.authenticate(credit)
         logger.info("authentication : " + authentication.toString())
-        val token =  tokenProvider.createTokenDto(authentication,role).also{
-            refreshTokenRepository.save(RefreshToken(email,it.refreshToken))
+        val token = tokenProvider.createTokenDto(authentication, role).also {
+            refreshTokenRepository.save(RefreshToken(email, it.refreshToken))
         }
 
-        return TokenResult(authentication.name,token)
+        return TokenResult(authentication.name, token)
     }
 
-    fun signUpCounselor(counselorDto: CounselorDto) : SignUpCounselorDto
-    {
-        val counselor : Counselor = Counselor(
-            counselorDto.email,passwordEncoder.encode(counselorDto.password),counselorDto.name,counselorDto.birth,
-            counselorDto.address,counselorDto.gender,counselorDto.profile_img_url,
+
+    fun signUpCounselor(requestCounselorDto: RequestCounselorDto, multipartFile: MultipartFile): ResponseCounselorDto {
+
+        // 저장 후 아래 "" (profile_img_url) 채우기
+
+        val counselor: Counselor = Counselor(
+            requestCounselorDto.email,
+            passwordEncoder.encode(requestCounselorDto.password),
+            requestCounselorDto.name,
+            requestCounselorDto.birth,
+            requestCounselorDto.address,
+            requestCounselorDto.gender,
+            "",
             Authority.ROLE_COUNSELOR
         )
 
@@ -84,66 +103,60 @@ class AuthService(
 
         return result.toResponseDto()
     }
+
     // header에 보내도록 수정
-    fun refreshToken(autoLoginDto: AutoLoginDto) : ResponseEntity<TokenDto?>
-    {
-        var header : HttpHeaders = HttpHeaders()
-        header.contentType = MediaType("application","json",Charsets.UTF_8)
+    fun refreshToken(autoLoginDto: AutoLoginDto): ResponseEntity<TokenDto?> {
+        var header: HttpHeaders = HttpHeaders()
+        header.contentType = MediaType("application", "json", Charsets.UTF_8)
 
         try {
-            if(!tokenProvider.validateToken(autoLoginDto.refreshToken)||!refreshTokenRepository.existsByTokenValue(autoLoginDto.refreshToken))
-            {
+            if (!tokenProvider.validateToken(autoLoginDto.refreshToken) || !refreshTokenRepository.existsByTokenValue(
+                    autoLoginDto.refreshToken
+                )
+            ) {
                 println("wrong refresh token")
-                return ResponseEntity(null,header, HttpStatus.UNAUTHORIZED)
+                return ResponseEntity(null, header, HttpStatus.UNAUTHORIZED)
             }
-        }catch (e : ExpiredJwtException)
-        {
+        } catch (e: ExpiredJwtException) {
             println("expired refresh jwt exception")
-            header.set("CODE","RTE")
-            return ResponseEntity(null,header, HttpStatus.UNAUTHORIZED)
+            header.set("CODE", "RTE")
+            return ResponseEntity(null, header, HttpStatus.UNAUTHORIZED)
         }
 
-        try{
-            if(!tokenProvider.validateToken(autoLoginDto.accessToken))
-            {
+        try {
+            if (!tokenProvider.validateToken(autoLoginDto.accessToken)) {
                 println("wrong access token")
-                return ResponseEntity(null,header, HttpStatus.UNAUTHORIZED)
+                return ResponseEntity(null, header, HttpStatus.UNAUTHORIZED)
             }
-        }catch (e : ExpiredJwtException)
-        {
+        } catch (e: ExpiredJwtException) {
             println("expired access jwt exception")
             val authentication = tokenProvider.getAuthentication(autoLoginDto.refreshToken)
-            val accessToken = tokenProvider.createAccessToken(authentication,autoLoginDto.authority)
-            header.set("Authorization","Bearer "+accessToken.accessToken)
-            header.set("RT",autoLoginDto.refreshToken)
-            return ResponseEntity(null,header, HttpStatus.OK)
+            val accessToken = tokenProvider.createAccessToken(authentication, autoLoginDto.authority)
+            header.set("Authorization", "Bearer " + accessToken.accessToken)
+            header.set("RT", autoLoginDto.refreshToken)
+            return ResponseEntity(null, header, HttpStatus.OK)
         }
 
-        return ResponseEntity(null,header, HttpStatus.OK)
+        return ResponseEntity(null, header, HttpStatus.OK)
     }
 
-    fun getRefreshToken(userEmail : String) : RefreshToken
-    {
+    fun getRefreshToken(userEmail: String): RefreshToken {
         return refreshTokenRepository.getById(userEmail)
     }
 
-    fun checkEmailDuplication(email : String,role : Authority) : Boolean
-    {
-        if(role.equals(Authority.ROLE_USER))
-        {
-            if(memberRepository.existsByEmail(email)){
-                return false}
-
-            else
-            {return true}
-        }
-
-        else if(role.equals(Authority.ROLE_COUNSELOR))
-        {
-            if(counselorRepository.existsByEmail(email)) {
+    fun checkEmailDuplication(email: String, role: Authority): Boolean {
+        if (role.equals(Authority.ROLE_USER)) {
+            if (memberRepository.existsByEmail(email)) {
                 return false
+            } else {
+                return true
             }
-            else {return true}
+        } else if (role.equals(Authority.ROLE_COUNSELOR)) {
+            if (counselorRepository.existsByEmail(email)) {
+                return false
+            } else {
+                return true
+            }
         }
 
         return false
