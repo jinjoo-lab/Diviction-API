@@ -4,9 +4,7 @@ import com.example.diviction.module.constant.Gender
 import javax.persistence.EnumType
 import javax.persistence.Enumerated
 
-data class SignUpMemberDto(
-    var id : Long,
-
+data class RequestMemberDto(
     var email : String,
 
     var password : String,
@@ -18,7 +16,6 @@ data class SignUpMemberDto(
     var address : String,
 
     @Enumerated(EnumType.STRING)
-    var gender : Gender,
+    var gender : Gender
 
-    var profile_img_url : String
 )

@@ -15,7 +15,7 @@ data class SaveDastDto(
     val date: LocalDate,
 
     @field: NotBlank
-    val userId : String,
+    val member_email : String,
 
     val frequency: Long,
 

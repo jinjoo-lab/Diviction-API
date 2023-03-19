@@ -20,7 +20,7 @@ class DastService(
     fun saveDast(dastDto: SaveDastDto)
     {
         val drugList : String = dastDto.drug.joinToString(",")
-        val member : Member? = memberRepository.getByEmail(dastDto.userId)
+        val member : Member? = memberRepository.getByEmail(dastDto.member_email)
 
         val dast : Dast = Dast(
             drug = drugList,

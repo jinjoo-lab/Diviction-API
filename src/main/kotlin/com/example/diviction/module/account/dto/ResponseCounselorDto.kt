@@ -1,12 +1,12 @@
 package com.example.diviction.module.account.dto
 
 import com.example.diviction.module.constant.Gender
-import org.springframework.format.annotation.DateTimeFormat
 import javax.persistence.EnumType
 import javax.persistence.Enumerated
-import javax.validation.constraints.Email
 
-data class CounselorDto (
+data class ResponseCounselorDto (
+    var id : Long?,
+
     var email : String,
 
     var password : String,
@@ -23,4 +23,4 @@ data class CounselorDto (
     var profile_img_url : String,
 
     var confirm : Boolean
-)
+    )

@@ -1,18 +1,17 @@
 package com.example.diviction.module.account.service
 
-import com.example.diviction.module.account.dto.CounselorDto
+import com.example.diviction.module.account.dto.RequestCounselorDto
 import com.example.diviction.module.account.dto.MatchResponseDto
-import com.example.diviction.module.account.dto.SignUpCounselorDto
+import com.example.diviction.module.account.dto.ResponseCounselorDto
 import com.example.diviction.module.account.entity.Counselor
 import com.example.diviction.module.account.repository.CounselorRepository
-import com.fasterxml.jackson.databind.RuntimeJsonMappingException
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 
 @Service
 class CounselorService(private val counselorRepository: CounselorRepository) {
-    fun Counselor.toResponseDto() : SignUpCounselorDto = SignUpCounselorDto(id!!,email, password, name, birth, address, gender, profile_img_url, confirm)
-    fun getCounselorByEmail(email : String) : SignUpCounselorDto
+    fun Counselor.toResponseDto() : ResponseCounselorDto = ResponseCounselorDto(id!!,email, password, name, birth, address, gender, profile_img_url, confirm)
+    fun getCounselorByEmail(email : String) : ResponseCounselorDto
     {
         var cur = counselorRepository.findByEmail(email)
 
@@ -28,7 +27,7 @@ class CounselorService(private val counselorRepository: CounselorRepository) {
         }
     }
 
-    fun getCounselorById(id : Long) : SignUpCounselorDto
+    fun getCounselorById(id : Long) : ResponseCounselorDto
     {
         var cur = counselorRepository.findById(id)
 
@@ -104,15 +103,11 @@ class CounselorService(private val counselorRepository: CounselorRepository) {
         }
     }
 
-    fun Counselor.toDto() : CounselorDto = CounselorDto(
-       email, password, name, birth, address, gender, profile_img_url, confirm
-    )
-
-    fun getAllCounselor() : List<SignUpCounselorDto>
+    fun getAllCounselor() : List<ResponseCounselorDto>
     {
         var counselor = counselorRepository.findAll()
 
-        var list : MutableList<SignUpCounselorDto> = mutableListOf()
+        var list : MutableList<ResponseCounselorDto> = mutableListOf()
 
         counselor.forEach {
             list.add(it.toResponseDto())
