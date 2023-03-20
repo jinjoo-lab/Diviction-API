@@ -37,4 +37,5 @@ out/
 .vscode/
 .env
 /src/main/resources/application.yml
+/src/main/resources/sturdy-now-380610-5cc4cbb5c648.json
 db/data/
