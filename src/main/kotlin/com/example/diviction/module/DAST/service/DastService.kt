@@ -1,6 +1,6 @@
 package com.example.diviction.module.DAST.service
 
-import com.example.diviction.module.DAST.dto.GetDastDto
+import com.example.diviction.module.DAST.dto.GetEmailDastDto
 import com.example.diviction.module.DAST.dto.ResultDastDto
 import com.example.diviction.module.DAST.dto.SaveDastDto
 import com.example.diviction.module.DAST.entity.Dast
@@ -36,13 +36,13 @@ class DastService(
         dastRepository.save(dast)
     }
 
-    fun getDast(getDastDto: GetDastDto) : ResultDastDto
+    fun getDast(getEmailDastDto: GetEmailDastDto) : ResultDastDto
     {
-        val dastList =  memberRepository.getByEmail(getDastDto.member_email)!!.dastLists
+        val dastList =  memberRepository.getByEmail(getEmailDastDto.member_email)!!.dastLists
         var result : Dast? = null
 
         dastList.forEach {
-            if(it.date.equals(getDastDto.date))
+            if(it.date.equals(getEmailDastDto.date))
             {
                 result = it
             }
@@ -54,8 +54,32 @@ class DastService(
         return result!!.toDto()
     }
 
+    fun getDastByMemberIdAndDate(memberId : Long,date : LocalDate) : List<ResultDastDto>
+    {
+        var list : MutableList<ResultDastDto> = mutableListOf()
+        dastRepository.getAllByDastMemberAndDate(memberRepository.getById(memberId),date).forEach {
+            list.add(it.toDto())
+        }
+
+        return list
+    }
+    fun getDastByMemberId(id : Long) : List<ResultDastDto>
+    {
+        var list : MutableList<ResultDastDto> = mutableListOf()
+        dastRepository.getAllByDastMember(memberRepository.getById(id)).forEach {
+            list.add(it.toDto())
+        }
+
+        return list
+    }
+
+    fun delelteDast(id : Long)
+    {
+        dastRepository.deleteById(id)
+    }
+
     fun Dast.toDto() : ResultDastDto = ResultDastDto(
-            drug, date, frequency, injection, cure, question
+            id!!,drug, date, frequency, injection, cure, question
         )
 
 }
