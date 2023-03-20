@@ -1,5 +1,8 @@
 package com.example.diviction.module.account.service
 
+import com.example.diviction.infra.gcp.GCP_URLs.COUNSELOR_BASIC_IMG_URL
+import com.example.diviction.infra.gcp.GCP_URLs.PATIENT_BASIC_IMG_URL
+import com.example.diviction.infra.gcp.GcpStorageService
 import com.example.diviction.module.account.dto.*
 import com.example.diviction.module.account.entity.Counselor
 import com.example.diviction.module.account.entity.Member
@@ -29,7 +32,8 @@ class AuthService(
     private val refreshTokenRepository: RefreshTokenRepository,
     private val tokenProvider: TokenProvider,
     private val authenticationManagerBuilder: AuthenticationManagerBuilder,
-    private val passwordEncoder: PasswordEncoder
+    private val passwordEncoder: PasswordEncoder,
+    private val gcpStorageService: GcpStorageService
 ) {
     private val logger = LoggerFactory.getLogger(AuthService::class.java)
     fun Member.toResponseDto(): ResponseMemberDto =
@@ -38,9 +42,13 @@ class AuthService(
     fun Counselor.toResponseDto(): ResponseCounselorDto =
         ResponseCounselorDto(id!!, email, password, name, birth, address, gender, profile_img_url, confirm)
 
-    fun signUpMember(requestMemberDto: RequestMemberDto, multipartFile: MultipartFile): ResponseMemberDto {
-
+    fun signUpMember(requestMemberDto: RequestMemberDto, multipartFile: MultipartFile?): ResponseMemberDto {
         // 저장 후 아래 "" (profile_img_url) 채우기
+        val imgUrl = if(multipartFile == null){
+            PATIENT_BASIC_IMG_URL
+        } else {
+            gcpStorageService.uploadFileToGCS(multipartFile)
+        }
 
         val member: Member = Member(
             requestMemberDto.email,
@@ -49,7 +57,7 @@ class AuthService(
             requestMemberDto.birth,
             requestMemberDto.address,
             requestMemberDto.gender,
-            "",
+            imgUrl,
             Authority.ROLE_USER
         )
 
@@ -84,9 +92,13 @@ class AuthService(
     }
 
 
-    fun signUpCounselor(requestCounselorDto: RequestCounselorDto, multipartFile: MultipartFile): ResponseCounselorDto {
-
+    fun signUpCounselor(requestCounselorDto: RequestCounselorDto, multipartFile: MultipartFile?): ResponseCounselorDto {
         // 저장 후 아래 "" (profile_img_url) 채우기
+        val imgUrl = if(multipartFile == null){
+            COUNSELOR_BASIC_IMG_URL
+        } else {
+            gcpStorageService.uploadFileToGCS(multipartFile)
+        }
 
         val counselor: Counselor = Counselor(
             requestCounselorDto.email,
@@ -95,7 +107,7 @@ class AuthService(
             requestCounselorDto.birth,
             requestCounselorDto.address,
             requestCounselorDto.gender,
-            "",
+            imgUrl,
             Authority.ROLE_COUNSELOR
         )
 
@@ -145,18 +157,10 @@ class AuthService(
     }
 
     fun checkEmailDuplication(email: String, role: Authority): Boolean {
-        if (role.equals(Authority.ROLE_USER)) {
-            if (memberRepository.existsByEmail(email)) {
-                return false
-            } else {
-                return true
-            }
-        } else if (role.equals(Authority.ROLE_COUNSELOR)) {
-            if (counselorRepository.existsByEmail(email)) {
-                return false
-            } else {
-                return true
-            }
+        if (role == Authority.ROLE_USER) {
+            return !memberRepository.existsByEmail(email)
+        } else if (role == Authority.ROLE_COUNSELOR) {
+            return !counselorRepository.existsByEmail(email)
         }
 
         return false
