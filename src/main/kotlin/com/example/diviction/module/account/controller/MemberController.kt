@@ -46,7 +46,7 @@ class MemberController (private val memberService: MemberService){
     }
     @Operation(description = "모든 중독자 조회 리스트 반환 ( 없을 경우 빈 리스트 ) ")
     @GetMapping("/all")
-    fun getAllMember(@RequestHeader(name = "RT") header : String) : List<ResponseMemberDto>
+    fun getAllMember() : List<ResponseMemberDto>
     {
         return memberService.getAllMember()
     }
