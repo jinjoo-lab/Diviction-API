@@ -5,6 +5,7 @@ import com.example.diviction.module.account.dto.ResponseMemberDto
 import com.example.diviction.module.account.entity.Member
 import com.example.diviction.module.account.repository.MemberRepository
 import org.springframework.stereotype.Service
+import org.springframework.web.multipart.MultipartFile
 
 @Service
 class MemberService(private val memberRepository: MemberRepository){
@@ -64,5 +65,10 @@ class MemberService(private val memberRepository: MemberRepository){
         }
 
         return list
+    }
+
+    fun updateMemberImg(memberId : Long,multipartFile: MultipartFile)
+    {
+        var member = memberRepository.getById(memberId)
     }
 }
