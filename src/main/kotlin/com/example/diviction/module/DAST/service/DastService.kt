@@ -54,8 +54,19 @@ class DastService(
         return result!!.toDto()
     }
 
+
+    fun getDastByMemberId(id : Long) : List<ResultDastDto>
+    {
+        var list : MutableList<ResultDastDto> = mutableListOf()
+        dastRepository.getAllByDastMember(memberRepository.getById(id)).forEach {
+            list.add(it.toDto())
+        }
+
+        return list
+    }
+
     fun Dast.toDto() : ResultDastDto = ResultDastDto(
-            drug, date, frequency, injection, cure, question
+            id!!,drug, date, frequency, injection, cure, question
         )
 
 }

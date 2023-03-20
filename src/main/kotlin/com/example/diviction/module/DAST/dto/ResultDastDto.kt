@@ -5,6 +5,8 @@ import java.time.LocalDate
 import javax.validation.constraints.NotBlank
 
 data class ResultDastDto(
+    val id : Long,
+
     val drug : String,
 
     val date : LocalDate,
