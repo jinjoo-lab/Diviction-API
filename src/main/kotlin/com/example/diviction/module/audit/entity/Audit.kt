@@ -11,7 +11,7 @@ class Audit() {
     @Id
     @Column(name = "id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    var id: Int? = null
+    var id: Long? = null
 
     @ManyToOne
     @JoinColumn(name = "user_id")
