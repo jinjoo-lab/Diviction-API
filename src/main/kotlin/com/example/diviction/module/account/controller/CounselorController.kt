@@ -6,6 +6,8 @@ import com.example.diviction.module.account.service.CounselorService
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.tags.Tag
 import org.springframework.web.bind.annotation.*
+import org.springframework.web.multipart.MultipartFile
+
 @Tag(name = "Counselor" , description = "상담자 confirm 수정 및 조회")
 @RestController
 @RequestMapping("/counselor")
@@ -54,4 +56,16 @@ class CounselorController(private val counselorService: CounselorService) {
     {
         return counselorService.getAllCounselor()
     }
+
+    @Operation(description = "상담사의 프로필 이미지를 변경시켜주는 API")
+    @PutMapping("/update/img/{counselorId}")
+    fun updateCounselorImg(
+        @PathVariable counselorId : Long,
+        @RequestPart multipartFile: MultipartFile
+    ){
+        counselorService.updateCounselorImg(counselorId,multipartFile)
+    }
+
+
+
 }

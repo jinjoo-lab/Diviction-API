@@ -5,11 +5,9 @@ import com.example.diviction.module.account.dto.ResponseMemberDto
 import com.example.diviction.module.account.service.MemberService
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.tags.Tag
-import org.springframework.web.bind.annotation.GetMapping
-import org.springframework.web.bind.annotation.PathVariable
-import org.springframework.web.bind.annotation.RequestHeader
-import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.RestController
+import org.springframework.http.MediaType
+import org.springframework.web.bind.annotation.*
+import org.springframework.web.multipart.MultipartFile
 
 @Tag(name = "Member", description = "중독자 조회 및 접근")
 @RestController
@@ -49,5 +47,15 @@ class MemberController (private val memberService: MemberService){
     fun getAllMember() : List<ResponseMemberDto>
     {
         return memberService.getAllMember()
+    }
+
+    @Operation(description = "중독자의 프로필을 바꾸는 API")
+    @PutMapping("/update/img/{memberId}", consumes = [MediaType.MULTIPART_FORM_DATA_VALUE])
+    fun updateMemberImg(
+        @PathVariable memberId : Long,
+        @RequestPart multipartFile: MultipartFile
+        )
+    {
+        memberService.updateMemberImg(memberId,multipartFile)
     }
 }

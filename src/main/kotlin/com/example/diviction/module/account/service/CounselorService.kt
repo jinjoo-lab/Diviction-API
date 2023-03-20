@@ -7,6 +7,7 @@ import com.example.diviction.module.account.entity.Counselor
 import com.example.diviction.module.account.repository.CounselorRepository
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
+import org.springframework.web.multipart.MultipartFile
 
 @Service
 class CounselorService(private val counselorRepository: CounselorRepository) {
@@ -114,5 +115,9 @@ class CounselorService(private val counselorRepository: CounselorRepository) {
         }
 
         return list
+    }
+
+    fun updateCounselorImg(counselorId : Long,multipartFile: MultipartFile){
+        var counselor = counselorRepository.getById(counselorId)
     }
 }
