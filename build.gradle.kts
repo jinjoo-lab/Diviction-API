@@ -43,6 +43,10 @@ dependencies {
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
     implementation("org.jetbrains.kotlin:kotlin-reflect")
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
+
+    //gcp
+    implementation("org.springframework.cloud:spring-cloud-gcp-starter-storage:1.2.8.RELEASE")
+
     compileOnly("org.projectlombok:lombok")
     runtimeOnly("org.mariadb.jdbc:mariadb-java-client")
     annotationProcessor("org.springframework.boot:spring-boot-configuration-processor")

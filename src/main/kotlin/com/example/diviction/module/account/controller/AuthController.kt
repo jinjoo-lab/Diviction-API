@@ -33,7 +33,7 @@ class AuthController(
     @PostMapping("/signUp/member", consumes = [MediaType.MULTIPART_FORM_DATA_VALUE, MediaType.APPLICATION_JSON_VALUE])
     fun signUpMember(
         @RequestPart(value = "requestMemberDto") requestMemberDto: RequestMemberDto,
-        @RequestPart(name = "image file") multipartFile: MultipartFile
+        @RequestPart(name = "image file") multipartFile: MultipartFile?
     ): ResponseEntity<ResponseMemberDto> {
         return ResponseEntity(authService.signUpMember(requestMemberDto,multipartFile), HttpStatus.OK)
     }
@@ -51,7 +51,7 @@ class AuthController(
     )
     fun signUpCounselor(
         @RequestPart(value = "requestCounselorDto") requestCounselorDto: RequestCounselorDto,
-        @RequestPart(name = "image file") multipartFile: MultipartFile
+        @RequestPart(name = "image file") multipartFile: MultipartFile?
     ): ResponseEntity<ResponseCounselorDto> {
         return ResponseEntity(authService.signUpCounselor(requestCounselorDto,multipartFile), HttpStatus.OK)
     }
