@@ -11,7 +11,9 @@ import org.springframework.web.multipart.MultipartFile
 @Tag(name = "Counselor" , description = "상담자 confirm 수정 및 조회")
 @RestController
 @RequestMapping("/counselor")
-class CounselorController(private val counselorService: CounselorService) {
+class CounselorController (
+    private val counselorService: CounselorService
+) {
     @Operation(description = "상담자 id(Long)으로 조회")
     @GetMapping("/id/{counselorId}")
     fun getCounselorById(@PathVariable(name = "counselorId") id : Long) : ResponseCounselorDto
@@ -57,11 +59,12 @@ class CounselorController(private val counselorService: CounselorService) {
         return counselorService.getAllCounselor()
     }
 
-    @Operation(description = "상담사의 프로필 이미지를 변경시켜주는 API")
+    @Operation(description = "상담사의 프로필 이미지를 변경시켜주는 API\n" +
+            "MultipartFile 없이 요청할 경우 기본 프로필 사진으로 초기화")
     @PutMapping("/update/img/{counselorId}")
     fun updateCounselorImg(
         @PathVariable counselorId : Long,
-        @RequestPart multipartFile: MultipartFile
+        @RequestPart multipartFile: MultipartFile?
     ){
         counselorService.updateCounselorImg(counselorId,multipartFile)
     }
