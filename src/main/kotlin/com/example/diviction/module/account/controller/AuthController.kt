@@ -30,12 +30,11 @@ class AuthController(
     }
 
     @Operation(description = "중독자 회원 가입 , 성공시 200 OK, 회원 아이디 포함한 정보 반환, 실패시 500 error")
-    @PostMapping("/signUp/member", consumes = [MediaType.MULTIPART_FORM_DATA_VALUE, MediaType.APPLICATION_JSON_VALUE])
+    @PostMapping("/signUp/member", consumes = [MediaType.MULTIPART_FORM_DATA_VALUE])
     fun signUpMember(
-        @RequestPart(value = "requestMemberDto") requestMemberDto: RequestMemberDto,
-        @RequestPart(name = "image file") multipartFile: MultipartFile?
+        @ModelAttribute requestMemberDto: RequestMemberDto
     ): ResponseEntity<ResponseMemberDto> {
-        return ResponseEntity(authService.signUpMember(requestMemberDto,multipartFile), HttpStatus.OK)
+        return ResponseEntity(authService.signUpMember(requestMemberDto), HttpStatus.OK)
     }
 
     @Operation(description = "중독자 로그인 , 성공시 : 200 ok, 토큰  , 실패시 401 error")
@@ -47,13 +46,12 @@ class AuthController(
     @Operation(description = "상담자 회원 가입 , 성공시 200 OK, 회원 아이디 포함한 정보 반환, 실패시 500 error")
     @PostMapping(
         "/signUp/counselor",
-        consumes = [MediaType.MULTIPART_FORM_DATA_VALUE, MediaType.APPLICATION_JSON_VALUE]
+        consumes = [MediaType.MULTIPART_FORM_DATA_VALUE]
     )
     fun signUpCounselor(
-        @RequestPart(value = "requestCounselorDto") requestCounselorDto: RequestCounselorDto,
-        @RequestPart(name = "image file") multipartFile: MultipartFile?
+        @ModelAttribute requestCounselorDto: RequestCounselorDto
     ): ResponseEntity<ResponseCounselorDto> {
-        return ResponseEntity(authService.signUpCounselor(requestCounselorDto,multipartFile), HttpStatus.OK)
+        return ResponseEntity(authService.signUpCounselor(requestCounselorDto), HttpStatus.OK)
     }
 
     @Operation(description = "상담자 로그인 , 성공시 : 200 ok, 토큰  , 실패시 401 error")

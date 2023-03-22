@@ -1,6 +1,7 @@
 package com.example.diviction.module.account.dto
 
 import com.example.diviction.module.constant.Gender
+import org.springframework.web.multipart.MultipartFile
 import javax.persistence.EnumType
 import javax.persistence.Enumerated
 
@@ -18,5 +19,7 @@ data class RequestCounselorDto (
     @Enumerated(EnumType.STRING)
     var gender : Gender,
 
-    var confirm : Boolean
+    var confirm : Boolean,
+
+    var multipartFile: MultipartFile?
 )

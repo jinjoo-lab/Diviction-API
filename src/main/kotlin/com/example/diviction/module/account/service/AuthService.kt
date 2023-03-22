@@ -42,12 +42,12 @@ class AuthService(
     fun Counselor.toResponseDto(): ResponseCounselorDto =
         ResponseCounselorDto(id!!, email, password, name, birth, address, gender, profile_img_url, confirm)
 
-    fun signUpMember(requestMemberDto: RequestMemberDto, multipartFile: MultipartFile?): ResponseMemberDto {
+    fun signUpMember(requestMemberDto: RequestMemberDto): ResponseMemberDto {
         // 저장 후 아래 "" (profile_img_url) 채우기
-        val imgUrl = if(multipartFile == null){
+        val imgUrl = if(requestMemberDto.multipartFile == null){
             PATIENT_BASIC_IMG_URL
         } else {
-            gcpStorageService.uploadFileToGCS(multipartFile)
+            gcpStorageService.uploadFileToGCS(requestMemberDto.multipartFile!!)
         }
 
         val member: Member = Member(
@@ -92,12 +92,12 @@ class AuthService(
     }
 
 
-    fun signUpCounselor(requestCounselorDto: RequestCounselorDto, multipartFile: MultipartFile?): ResponseCounselorDto {
+    fun signUpCounselor(requestCounselorDto: RequestCounselorDto): ResponseCounselorDto {
         // 저장 후 아래 "" (profile_img_url) 채우기
-        val imgUrl = if(multipartFile == null){
+        val imgUrl = if(requestCounselorDto.multipartFile == null){
             COUNSELOR_BASIC_IMG_URL
         } else {
-            gcpStorageService.uploadFileToGCS(multipartFile)
+            gcpStorageService.uploadFileToGCS(requestCounselorDto.multipartFile!!)
         }
 
         val counselor: Counselor = Counselor(
