@@ -1,5 +1,7 @@
 package com.example.diviction.module.account.service
 
+import com.example.diviction.infra.gcp.GCP_URLs
+import com.example.diviction.infra.gcp.GcpStorageService
 import com.example.diviction.module.account.dto.MatchResponseDto
 import com.example.diviction.module.account.dto.ResponseMemberDto
 import com.example.diviction.module.account.entity.Member
@@ -8,7 +10,10 @@ import org.springframework.stereotype.Service
 import org.springframework.web.multipart.MultipartFile
 
 @Service
-class MemberService(private val memberRepository: MemberRepository){
+class MemberService(
+    private val memberRepository: MemberRepository,
+    private val gcpStorageService: GcpStorageService
+    ){
     fun getMemberById(id : Long) : ResponseMemberDto{
         val member = memberRepository.getById(id)
 
@@ -67,8 +72,16 @@ class MemberService(private val memberRepository: MemberRepository){
         return list
     }
 
-    fun updateMemberImg(memberId : Long,multipartFile: MultipartFile)
+    fun updateMemberImg(
+        memberId : Long,
+        multipartFile: MultipartFile?
+    )
     {
-        var member = memberRepository.getById(memberId)
+        val member = memberRepository.getById(memberId)
+        if (multipartFile == null) {
+            member.profile_img_url = GCP_URLs.PATIENT_BASIC_IMG_URL
+        } else {
+            member.profile_img_url = gcpStorageService.uploadFileToGCS(multipartFile)
+        }
     }
 }

@@ -1,6 +1,7 @@
 package com.example.diviction.module.account.service
 
-import com.example.diviction.module.account.dto.RequestCounselorDto
+import com.example.diviction.infra.gcp.GCP_URLs.COUNSELOR_BASIC_IMG_URL
+import com.example.diviction.infra.gcp.GcpStorageService
 import com.example.diviction.module.account.dto.MatchResponseDto
 import com.example.diviction.module.account.dto.ResponseCounselorDto
 import com.example.diviction.module.account.dto.ResponseMemberDto
@@ -12,15 +13,18 @@ import org.springframework.transaction.annotation.Transactional
 import org.springframework.web.multipart.MultipartFile
 
 @Service
-class CounselorService(private val counselorRepository: CounselorRepository) {
+class CounselorService(
+    private val counselorRepository: CounselorRepository,
+    private val gcpStorageService: GcpStorageService
+) {
     fun Counselor.toResponseDto() : ResponseCounselorDto = ResponseCounselorDto(id!!,email, password, name, birth, address, gender, profile_img_url, confirm)
     fun getCounselorByEmail(email : String) : ResponseCounselorDto
     {
-        var cur = counselorRepository.findByEmail(email)
+        val cur = counselorRepository.findByEmail(email)
 
         if(cur.isPresent)
         {
-            var counselor : Counselor = cur.get()
+            val counselor : Counselor = cur.get()
 
             return counselor.toResponseDto()
         }
@@ -46,20 +50,13 @@ class CounselorService(private val counselorRepository: CounselorRepository) {
     }
     fun getConfirm(email: String) : Boolean
     {
-        var cur = counselorRepository.findByEmail(email)
+        val cur = counselorRepository.findByEmail(email)
 
         if(cur.isPresent)
         {
-            var counselor = cur.get()
+            val counselor = cur.get()
 
-            if(counselor.confirm)
-            {
-                return true
-            }
-            else
-            {
-                return false
-            }
+            return counselor.confirm
         }
         return false
     }
@@ -67,11 +64,11 @@ class CounselorService(private val counselorRepository: CounselorRepository) {
     @Transactional
     fun setConfirmByEmail(email : String)
     {
-        var cur = counselorRepository.findByEmail(email)
+        val cur = counselorRepository.findByEmail(email)
 
         if(cur.isPresent)
         {
-            var counselor = cur.get()
+            val counselor = cur.get()
 
             counselor.confirm = true
 
@@ -86,14 +83,14 @@ class CounselorService(private val counselorRepository: CounselorRepository) {
 
     fun getMatchListById(id : Long) : List<MatchResponseDto>
     {
-        var cur = counselorRepository.findById(id)
+        val cur = counselorRepository.findById(id)
 
-        var re_list = ArrayList<MatchResponseDto>()
+        val re_list = ArrayList<MatchResponseDto>()
         if(cur.isPresent)
         {
-            var counselor = cur.get()
+            val counselor = cur.get()
 
-            var list = counselor.matching_list
+            val list = counselor.matching_list
 
             list.forEach {
                re_list.add(MatchResponseDto(matchId = it.id, counselorId = it.counselor.id ,counselorEmail = it.counselor.email,
@@ -109,9 +106,9 @@ class CounselorService(private val counselorRepository: CounselorRepository) {
 
     fun getAllCounselor() : List<ResponseCounselorDto>
     {
-        var counselor = counselorRepository.findAll()
+        val counselor = counselorRepository.findAll()
 
-        var list : MutableList<ResponseCounselorDto> = mutableListOf()
+        val list : MutableList<ResponseCounselorDto> = mutableListOf()
 
         counselor.forEach {
             list.add(it.toResponseDto())
@@ -120,8 +117,16 @@ class CounselorService(private val counselorRepository: CounselorRepository) {
         return list
     }
 
-    fun updateCounselorImg(counselorId : Long,multipartFile: MultipartFile){
-        var counselor = counselorRepository.getById(counselorId)
+    fun updateCounselorImg(
+        counselorId : Long,
+        multipartFile: MultipartFile?
+    ){
+        val counselor = counselorRepository.getById(counselorId)
+        if (multipartFile == null) {
+            counselor.profile_img_url = COUNSELOR_BASIC_IMG_URL
+        } else {
+            counselor.profile_img_url = gcpStorageService.uploadFileToGCS(multipartFile)
+        }
     }
 
     fun Member.toResponseDto() : ResponseMemberDto = ResponseMemberDto(id!!,email, password, name, birth, address, gender, profile_img_url)
