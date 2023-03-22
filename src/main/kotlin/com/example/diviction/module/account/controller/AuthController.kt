@@ -67,4 +67,5 @@ class AuthController(
     fun checkEmailDuplication(@PathVariable email: String, @PathVariable role: Authority): Boolean {
         return authService.checkEmailDuplication(email, role)
     }
+
 }

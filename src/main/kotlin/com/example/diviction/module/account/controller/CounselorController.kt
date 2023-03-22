@@ -45,7 +45,7 @@ class CounselorController(private val counselorService: CounselorService) {
     }
     @Operation(description = "id(Long)의 상담자의 현재 매칭 정보를 list로 제공 , 매칭 정보 없을 경우 빈 리스트")
     @GetMapping("match/list/{id}")
-    fun getMatchListById(id :Long) : List<MatchResponseDto>
+    fun getMatchListById(@PathVariable id :Long) : List<MatchResponseDto>
     {
         return counselorService.getMatchListById(id)
     }
