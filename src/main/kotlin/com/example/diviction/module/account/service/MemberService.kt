@@ -1,19 +1,14 @@
 package com.example.diviction.module.account.service
 
-import com.example.diviction.infra.gcp.GcpStorageService
 import com.example.diviction.module.account.dto.MatchResponseDto
 import com.example.diviction.module.account.dto.ResponseMemberDto
 import com.example.diviction.module.account.entity.Member
 import com.example.diviction.module.account.repository.MemberRepository
 import org.springframework.stereotype.Service
-import org.springframework.transaction.annotation.Transactional
 import org.springframework.web.multipart.MultipartFile
 
 @Service
-class MemberService(
-    private val memberRepository: MemberRepository,
-    private val gcpStorageService: GcpStorageService
-){
+class MemberService(private val memberRepository: MemberRepository){
     fun getMemberById(id : Long) : ResponseMemberDto{
         val member = memberRepository.getById(id)
 
@@ -72,12 +67,8 @@ class MemberService(
         return list
     }
 
-    @Transactional
     fun updateMemberImg(memberId : Long,multipartFile: MultipartFile)
     {
         var member = memberRepository.getById(memberId)
-        val imgUrl = gcpStorageService.uploadFileToGCS(multipartFile)
-
-        member.profile_img_url = imgUrl
     }
 }

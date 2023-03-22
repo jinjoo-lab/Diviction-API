@@ -1,6 +1,5 @@
 package com.example.diviction.module.account.controller
 
-import com.example.diviction.infra.gcp.GcpStorageService
 import com.example.diviction.module.account.dto.MatchResponseDto
 import com.example.diviction.module.account.dto.ResponseMemberDto
 import com.example.diviction.module.account.service.MemberService
@@ -13,9 +12,7 @@ import org.springframework.web.multipart.MultipartFile
 @Tag(name = "Member", description = "중독자 조회 및 접근")
 @RestController
 @RequestMapping("/member")
-class MemberController (
-    private val memberService: MemberService
-){
+class MemberController (private val memberService: MemberService){
     @Operation(description = "중독자의 email로 조회 , 없을 경우 500 Error")
     @GetMapping("/get/email/{user_email}")
     fun getMemberByEamil(@PathVariable user_email : String) : ResponseMemberDto
