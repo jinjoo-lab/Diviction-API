@@ -68,8 +68,4 @@ class AuthController(
         return authService.checkEmailDuplication(email, role)
     }
 
-    @PostMapping()
-    fun Garbage(){
-
-    }
 }
