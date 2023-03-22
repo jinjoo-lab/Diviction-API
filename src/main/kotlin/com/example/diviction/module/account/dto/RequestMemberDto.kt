@@ -1,6 +1,7 @@
 package com.example.diviction.module.account.dto
 
 import com.example.diviction.module.constant.Gender
+import org.springframework.web.multipart.MultipartFile
 import javax.persistence.EnumType
 import javax.persistence.Enumerated
 
@@ -16,6 +17,8 @@ data class RequestMemberDto(
     var address : String,
 
     @Enumerated(EnumType.STRING)
-    var gender : Gender
+    var gender : Gender,
+
+    var multipartFile: MultipartFile?
 
 )

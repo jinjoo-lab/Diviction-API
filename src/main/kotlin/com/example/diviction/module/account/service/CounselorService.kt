@@ -3,7 +3,9 @@ package com.example.diviction.module.account.service
 import com.example.diviction.module.account.dto.RequestCounselorDto
 import com.example.diviction.module.account.dto.MatchResponseDto
 import com.example.diviction.module.account.dto.ResponseCounselorDto
+import com.example.diviction.module.account.dto.ResponseMemberDto
 import com.example.diviction.module.account.entity.Counselor
+import com.example.diviction.module.account.entity.Member
 import com.example.diviction.module.account.repository.CounselorRepository
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -94,7 +96,8 @@ class CounselorService(private val counselorRepository: CounselorRepository) {
             var list = counselor.matching_list
 
             list.forEach {
-               re_list.add(MatchResponseDto(matchId = it.id, counselorId = it.counselor.id ,counselorEmail = it.counselor.email, patientId = it.patient.id, patientEmail = it.patient.email))
+               re_list.add(MatchResponseDto(matchId = it.id, counselorId = it.counselor.id ,counselorEmail = it.counselor.email,
+               member = it.patient.toResponseDto()))
             }
 
             return re_list
@@ -120,4 +123,6 @@ class CounselorService(private val counselorRepository: CounselorRepository) {
     fun updateCounselorImg(counselorId : Long,multipartFile: MultipartFile){
         var counselor = counselorRepository.getById(counselorId)
     }
+
+    fun Member.toResponseDto() : ResponseMemberDto = ResponseMemberDto(id!!,email, password, name, birth, address, gender, profile_img_url)
 }

@@ -2,6 +2,7 @@ package com.example.diviction.module.account.service
 
 import com.example.diviction.module.account.dto.MatchDto
 import com.example.diviction.module.account.dto.MatchResponseDto
+import com.example.diviction.module.account.dto.ResponseMemberDto
 import com.example.diviction.module.account.entity.Matching
 import com.example.diviction.module.account.entity.Member
 import com.example.diviction.module.account.repository.CounselorRepository
@@ -45,7 +46,7 @@ class MatchService(
                 counselor.matching_list.add(match)
                 val cur = matchRepository.save(match)
 
-                return MatchResponseDto(cur.id,cur.counselor.id,cur.counselor.email,cur.patient.id,cur.counselor.email)
+                return MatchResponseDto(cur.id,cur.counselor.id,cur.counselor.email,cur.patient.toResponseDto())
             }
         }
 
@@ -62,7 +63,8 @@ class MatchService(
         {
             var match = cur.get()
 
-            return MatchResponseDto(matchId = match.id, counselorId = match.counselor.id ,counselorEmail = match.counselor.email,patientId = match.patient.id ,patientEmail = match.patient.email)
+            return MatchResponseDto(matchId = match.id, counselorId = match.counselor.id ,counselorEmail = match.counselor.email
+                , member = match.patient.toResponseDto())
         }
 
         else{
@@ -77,7 +79,7 @@ class MatchService(
         val list : MutableList<MatchResponseDto> = mutableListOf()
 
         match.forEach {
-            list.add(MatchResponseDto(it.id,it.counselor.id,it.counselor.email,it.patient.id,it.patient.email))
+            list.add(MatchResponseDto(it.id,it.counselor.id,it.counselor.email,it.patient.toResponseDto()))
         }
 
         return list
@@ -87,4 +89,6 @@ class MatchService(
     {
         matchRepository.deleteById(id)
     }
+
+    fun Member.toResponseDto() : ResponseMemberDto = ResponseMemberDto(id!!,email, password, name, birth, address, gender, profile_img_url)
 }

@@ -41,7 +41,7 @@ class MemberService(private val memberRepository: MemberRepository){
 
             if(match!=null)
             {
-                return MatchResponseDto(matchId = match.id, counselorId = match.counselor.id,counselorEmail = match.counselor.email,patientId = match.patient.id ,patientEmail = match.patient.email)
+                return MatchResponseDto(matchId = match.id, counselorId = match.counselor.id,counselorEmail = match.counselor.email, member = match.patient.toResponseDto())
             }
         }
 
