@@ -44,4 +44,5 @@ class MatchController(@Autowired private val matchService: MatchService) {
     {
         matchService.deleteMatch(id)
     }
+
 }
