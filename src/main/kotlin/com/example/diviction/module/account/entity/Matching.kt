@@ -1,6 +1,7 @@
 package com.example.diviction.module.account.entity
 
 import com.example.diviction.module.constant.MatchState
+import com.example.diviction.module.memo.entity.Memo
 import lombok.Getter
 import org.hibernate.annotations.OnDelete
 import org.hibernate.annotations.OnDeleteAction
@@ -26,5 +27,11 @@ class Matching(
     @Enumerated(value = EnumType.STRING)
     var state : MatchState = MatchState.KEEP
 
-
+    @OneToMany(
+        targetEntity = Memo::class,
+        mappedBy = "match",
+        cascade = [CascadeType.REMOVE],
+        orphanRemoval = true
+    )
+    var memoList : MutableList<Memo> = mutableListOf()
 }
