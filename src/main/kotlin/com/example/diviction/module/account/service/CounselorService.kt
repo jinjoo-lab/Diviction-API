@@ -13,7 +13,7 @@ import org.springframework.web.multipart.MultipartFile
 
 @Service
 class CounselorService(private val counselorRepository: CounselorRepository) {
-    fun Counselor.toResponseDto() : ResponseCounselorDto = ResponseCounselorDto(id!!,email, password, name, birth, address, gender, profile_img_url, confirm)
+
     fun getCounselorByEmail(email : String) : ResponseCounselorDto
     {
         var cur = counselorRepository.findByEmail(email)
@@ -96,7 +96,7 @@ class CounselorService(private val counselorRepository: CounselorRepository) {
             var list = counselor.matching_list
 
             list.forEach {
-               re_list.add(MatchResponseDto(matchId = it.id, counselorId = it.counselor.id ,counselorEmail = it.counselor.email,
+               re_list.add(MatchResponseDto(matchId = it.id, counselor = it.counselor.toResponseDto(),
                member = it.patient.toResponseDto()))
             }
 
@@ -125,4 +125,5 @@ class CounselorService(private val counselorRepository: CounselorRepository) {
     }
 
     fun Member.toResponseDto() : ResponseMemberDto = ResponseMemberDto(id!!,email, password, name, birth, address, gender, profile_img_url)
+    fun Counselor.toResponseDto() : ResponseCounselorDto = ResponseCounselorDto(id!!,email, password, name, birth, address, gender, profile_img_url, confirm)
 }

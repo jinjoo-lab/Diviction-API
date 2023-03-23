@@ -6,7 +6,6 @@ import javax.persistence.Enumerated
 
 data class MatchResponseDto(
     var matchId : Long?,
-    var counselorId  : Long?,
-    var counselorEmail : String,
+    val counselor : ResponseCounselorDto,
     var member : ResponseMemberDto
 )

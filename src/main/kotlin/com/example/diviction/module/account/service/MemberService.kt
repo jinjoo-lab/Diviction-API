@@ -1,7 +1,9 @@
 package com.example.diviction.module.account.service
 
 import com.example.diviction.module.account.dto.MatchResponseDto
+import com.example.diviction.module.account.dto.ResponseCounselorDto
 import com.example.diviction.module.account.dto.ResponseMemberDto
+import com.example.diviction.module.account.entity.Counselor
 import com.example.diviction.module.account.entity.Member
 import com.example.diviction.module.account.repository.MemberRepository
 import org.springframework.stereotype.Service
@@ -41,7 +43,7 @@ class MemberService(private val memberRepository: MemberRepository){
 
             if(match!=null)
             {
-                return MatchResponseDto(matchId = match.id, counselorId = match.counselor.id,counselorEmail = match.counselor.email, member = match.patient.toResponseDto())
+                return MatchResponseDto(matchId = match.id, counselor = match.counselor.toResponseDto(), member = match.patient.toResponseDto())
             }
         }
 
@@ -54,6 +56,7 @@ class MemberService(private val memberRepository: MemberRepository){
     }
 
     fun Member.toResponseDto() : ResponseMemberDto = ResponseMemberDto(id!!,email, password, name, birth, address, gender, profile_img_url)
+    fun Counselor.toResponseDto() : ResponseCounselorDto = ResponseCounselorDto(id!!,email, password, name, birth, address, gender, profile_img_url, confirm)
 
     fun getAllMember() : List<ResponseMemberDto>
     {
