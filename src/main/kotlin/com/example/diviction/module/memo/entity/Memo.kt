@@ -23,11 +23,11 @@ class Memo(
 
     @Column(name = "modi_dt")
     @field: JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
-    val modiDate : LocalDateTime,
+    var modiDate : LocalDateTime,
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "match_id", nullable = false)
-    var match : Matching
+    val match : Matching
 ) {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

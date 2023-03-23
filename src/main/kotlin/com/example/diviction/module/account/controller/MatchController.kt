@@ -3,6 +3,7 @@ package com.example.diviction.module.account.controller
 import com.example.diviction.module.account.dto.MatchDto
 import com.example.diviction.module.account.dto.MatchResponseDto
 import com.example.diviction.module.account.service.MatchService
+import com.example.diviction.module.memo.dto.ResponseMemoDto
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.tags.Tag
 import org.springframework.beans.factory.annotation.Autowired
@@ -44,5 +45,4 @@ class MatchController(@Autowired private val matchService: MatchService) {
     {
         matchService.deleteMatch(id)
     }
-
 }
