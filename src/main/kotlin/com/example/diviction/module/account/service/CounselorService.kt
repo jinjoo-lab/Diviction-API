@@ -1,5 +1,7 @@
 package com.example.diviction.module.account.service
 
+import com.example.diviction.infra.gcp.GCP_URLs.COUNSELOR_BASIC_IMG_URL
+import com.example.diviction.infra.gcp.GcpStorageService
 import com.example.diviction.module.account.dto.RequestCounselorDto
 import com.example.diviction.module.account.dto.MatchResponseDto
 import com.example.diviction.module.account.dto.ResponseCounselorDto
@@ -12,7 +14,10 @@ import org.springframework.transaction.annotation.Transactional
 import org.springframework.web.multipart.MultipartFile
 
 @Service
-class CounselorService(private val counselorRepository: CounselorRepository) {
+class CounselorService(
+    private val counselorRepository: CounselorRepository,
+    private val gcpStorageService: GcpStorageService
+) {
 
     fun getCounselorByEmail(email : String) : ResponseCounselorDto
     {
@@ -121,7 +126,12 @@ class CounselorService(private val counselorRepository: CounselorRepository) {
     }
 
     fun updateCounselorImg(counselorId : Long,multipartFile: MultipartFile){
-        var counselor = counselorRepository.getById(counselorId)
+        val counselor = counselorRepository.getById(counselorId)
+        if (multipartFile == null) {
+            counselor.profile_img_url = COUNSELOR_BASIC_IMG_URL
+        } else {
+            counselor.profile_img_url = gcpStorageService.uploadFileToGCS(multipartFile)
+        }
     }
 
     fun Member.toResponseDto() : ResponseMemberDto = ResponseMemberDto(id!!,email, password, name, birth, address, gender, profile_img_url)
