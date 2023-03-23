@@ -29,6 +29,6 @@ class GcpStorageService(
     }
 
     fun getFileEx(fileName: String): String {
-        return fileName.substring(fileName.lastIndexOf(".") + 1)
+        return fileName.substring(fileName.lastIndexOf(".") + 1).lowercase()
     }
 }

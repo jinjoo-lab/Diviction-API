@@ -12,7 +12,9 @@ import org.springframework.web.multipart.MultipartFile
 @Tag(name = "Member", description = "중독자 조회 및 접근")
 @RestController
 @RequestMapping("/member")
-class MemberController (private val memberService: MemberService){
+class MemberController (
+    private val memberService: MemberService
+) {
     @Operation(description = "중독자의 email로 조회 , 없을 경우 500 Error")
     @GetMapping("/get/email/{user_email}")
     fun getMemberByEamil(@PathVariable user_email : String) : ResponseMemberDto
@@ -49,11 +51,11 @@ class MemberController (private val memberService: MemberService){
         return memberService.getAllMember()
     }
 
-    @Operation(description = "중독자의 프로필을 바꾸는 API")
+    @Operation(description = "중독자의 프로필을 바꾸는 API\n MultipartFile 없이 요청할 경우 기본 프로필 사진으로 초기화")
     @PutMapping("/update/img/{memberId}", consumes = [MediaType.MULTIPART_FORM_DATA_VALUE])
     fun updateMemberImg(
         @PathVariable memberId : Long,
-        @RequestPart multipartFile: MultipartFile
+        @RequestPart multipartFile: MultipartFile?
         )
     {
         memberService.updateMemberImg(memberId,multipartFile)
