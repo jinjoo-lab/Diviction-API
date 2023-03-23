@@ -2,7 +2,9 @@ package com.example.diviction.module.account.service
 
 import com.example.diviction.module.account.dto.MatchDto
 import com.example.diviction.module.account.dto.MatchResponseDto
+import com.example.diviction.module.account.dto.ResponseCounselorDto
 import com.example.diviction.module.account.dto.ResponseMemberDto
+import com.example.diviction.module.account.entity.Counselor
 import com.example.diviction.module.account.entity.Matching
 import com.example.diviction.module.account.entity.Member
 import com.example.diviction.module.account.repository.CounselorRepository
@@ -46,7 +48,7 @@ class MatchService(
                 counselor.matching_list.add(match)
                 val cur = matchRepository.save(match)
 
-                return MatchResponseDto(cur.id,cur.counselor.id,cur.counselor.email,cur.patient.toResponseDto())
+                return MatchResponseDto(cur.id,cur.counselor.toResponseDto(),cur.patient.toResponseDto())
             }
         }
 
@@ -63,7 +65,7 @@ class MatchService(
         {
             var match = cur.get()
 
-            return MatchResponseDto(matchId = match.id, counselorId = match.counselor.id ,counselorEmail = match.counselor.email
+            return MatchResponseDto(matchId = match.id, counselor = match.counselor.toResponseDto()
                 , member = match.patient.toResponseDto())
         }
 
@@ -79,7 +81,7 @@ class MatchService(
         val list : MutableList<MatchResponseDto> = mutableListOf()
 
         match.forEach {
-            list.add(MatchResponseDto(it.id,it.counselor.id,it.counselor.email,it.patient.toResponseDto()))
+            list.add(MatchResponseDto(it.id,it.counselor.toResponseDto(),it.patient.toResponseDto()))
         }
 
         return list
@@ -91,4 +93,5 @@ class MatchService(
     }
 
     fun Member.toResponseDto() : ResponseMemberDto = ResponseMemberDto(id!!,email, password, name, birth, address, gender, profile_img_url)
+    fun Counselor.toResponseDto() : ResponseCounselorDto = ResponseCounselorDto(id!!,email, password, name, birth, address, gender, profile_img_url, confirm)
 }

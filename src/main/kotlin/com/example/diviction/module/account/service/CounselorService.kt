@@ -17,7 +17,7 @@ class CounselorService(
     private val counselorRepository: CounselorRepository,
     private val gcpStorageService: GcpStorageService
 ) {
-    fun Counselor.toResponseDto() : ResponseCounselorDto = ResponseCounselorDto(id!!,email, password, name, birth, address, gender, profile_img_url, confirm)
+
     fun getCounselorByEmail(email : String) : ResponseCounselorDto
     {
         val cur = counselorRepository.findByEmail(email)
@@ -93,7 +93,7 @@ class CounselorService(
             val list = counselor.matching_list
 
             list.forEach {
-               re_list.add(MatchResponseDto(matchId = it.id, counselorId = it.counselor.id ,counselorEmail = it.counselor.email,
+               re_list.add(MatchResponseDto(matchId = it.id, counselor = it.counselor.toResponseDto(),
                member = it.patient.toResponseDto()))
             }
 
@@ -117,6 +117,7 @@ class CounselorService(
         return list
     }
 
+
     fun updateCounselorImg(
         counselorId : Long,
         multipartFile: MultipartFile?
@@ -130,4 +131,5 @@ class CounselorService(
     }
 
     fun Member.toResponseDto() : ResponseMemberDto = ResponseMemberDto(id!!,email, password, name, birth, address, gender, profile_img_url)
+    fun Counselor.toResponseDto() : ResponseCounselorDto = ResponseCounselorDto(id!!,email, password, name, birth, address, gender, profile_img_url, confirm)
 }
