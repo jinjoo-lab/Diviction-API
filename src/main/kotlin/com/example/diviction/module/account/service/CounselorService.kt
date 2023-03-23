@@ -51,20 +51,13 @@ class CounselorService(
     }
     fun getConfirm(email: String) : Boolean
     {
-        var cur = counselorRepository.findByEmail(email)
+        val cur = counselorRepository.findByEmail(email)
 
         if(cur.isPresent)
         {
-            var counselor = cur.get()
+            val counselor = cur.get()
 
-            if(counselor.confirm)
-            {
-                return true
-            }
-            else
-            {
-                return false
-            }
+            return counselor.confirm
         }
         return false
     }
