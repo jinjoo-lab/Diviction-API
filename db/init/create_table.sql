@@ -109,4 +109,13 @@ create table diviction.dast
     cure      BIGINT       not null,
     question  BIGINT       not null
 );
+create table diviction.memo(
+    id BIGINT AUTO_INCREMENT PRIMARY KEY ,
+    match_id BIGINT NOT NULL ,
+    FOREIGN KEY(match_id) REFERENCES diviction.matching(id),
+    title VARCHAR(128) NOT NULL ,
+    content VARCHAR(2048) NOT NULL ,
+    init_dt VARCHAR(64) NOT NULL ,
+    modi_dt VARCHAR(64) NOT NULL
+)
 #create index member_email_index USING HASH ON diviction.member(email)

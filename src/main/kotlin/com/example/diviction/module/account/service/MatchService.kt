@@ -10,6 +10,8 @@ import com.example.diviction.module.account.entity.Member
 import com.example.diviction.module.account.repository.CounselorRepository
 import com.example.diviction.module.account.repository.MatchRepository
 import com.example.diviction.module.account.repository.MemberRepository
+import com.example.diviction.module.memo.dto.ResponseMemoDto
+import com.example.diviction.module.memo.entity.Memo
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -94,4 +96,5 @@ class MatchService(
 
     fun Member.toResponseDto() : ResponseMemberDto = ResponseMemberDto(id!!,email, password, name, birth, address, gender, profile_img_url)
     fun Counselor.toResponseDto() : ResponseCounselorDto = ResponseCounselorDto(id!!,email, password, name, birth, address, gender, profile_img_url, confirm)
+
 }
