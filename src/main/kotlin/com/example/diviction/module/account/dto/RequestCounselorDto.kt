@@ -19,7 +19,5 @@ data class RequestCounselorDto (
     @Enumerated(EnumType.STRING)
     var gender : Gender,
 
-    var confirm : Boolean,
-
     var multipartFile: MultipartFile?
 )
