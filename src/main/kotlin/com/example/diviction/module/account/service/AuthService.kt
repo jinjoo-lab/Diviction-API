@@ -152,10 +152,6 @@ class AuthService(
         return ResponseEntity(null, header, HttpStatus.OK)
     }
 
-    fun getRefreshToken(userEmail: String): RefreshToken {
-        return refreshTokenRepository.getById(userEmail)
-    }
-
     fun checkEmailDuplication(email: String, role: Authority): Boolean {
         if (role == Authority.ROLE_USER) {
             return !memberRepository.existsByEmail(email)
