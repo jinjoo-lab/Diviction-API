@@ -33,7 +33,7 @@ class TokenProvider(
 
     companion object {
         // test
-        private const val ACCESS_TOKEN_EXPIRE_TIME: Long = (1000*60*30).toLong() // 30minute
+        private const val ACCESS_TOKEN_EXPIRE_TIME: Long = (1000).toLong() // 30minute
         private const val REFRESH_TOKEN_EXPIRE_TIME: Long = (1000* 60 * 60 * 24 * 7).toLong() // 7days
     }
 
@@ -164,10 +164,10 @@ class TokenProvider(
             Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token)
             return true
         } catch (e: SecurityException) {
-            logger.info("잘못된 JWT 서명입니다.")
+            logger.info("Security 잘못된 JWT 서명입니다.")
             return false
         } catch (e: MalformedJwtException) {
-            logger.info("잘못된 JWT 서명입니다.")
+            logger.info("Malformed 잘못된 JWT 서명입니다.")
             return false
         } catch (e: UnsupportedJwtException) {
             logger.info("지원되지 않는 JWT 토큰입니다.")
