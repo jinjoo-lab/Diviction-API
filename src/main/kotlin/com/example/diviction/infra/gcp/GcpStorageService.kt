@@ -13,19 +13,8 @@ import java.util.*
 class GcpStorageService(
         private val storage: Storage,
         @Value("\${spring.cloud.gcp.storage.bucket}")
-        private val bucketName: String,
-        private val configureBucketCors: ConfigureBucketCors
-
+        private val bucketName: String
 ) {
-    init {
-        configureBucketCors.configureBucketCors(
-                projectId = "sturdy-now-380610",
-                bucketName = bucketName,
-                origin = "*",
-                responseHeader = "Content-Type",
-                maxAgeSeconds = 3600
-        )
-    }
     fun uploadFileToGCS(imageFile: MultipartFile): String {
         val randUUID = UUID.randomUUID().toString()
         val fileEx = getFileEx(imageFile.originalFilename!!)

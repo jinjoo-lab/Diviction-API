@@ -4,16 +4,14 @@ import com.google.cloud.storage.Cors
 import com.google.cloud.storage.HttpMethod
 import com.google.cloud.storage.StorageOptions
 import com.google.common.collect.ImmutableList
-import org.springframework.stereotype.Component
 
-@Component
 class ConfigureBucketCors {
     fun configureBucketCors(
-        projectId: String,
-        bucketName: String,
-        origin: String,
-        responseHeader: String,
-        maxAgeSeconds: Int
+        projectId: String = "sturdy-now-380610",
+        bucketName: String = "diviction",
+        origin: String = "*",
+        responseHeader: String = "Content-Type",
+        maxAgeSeconds: Int = 3600
     ) {
         val storage = StorageOptions.newBuilder().setProjectId(projectId).build().service
         val bucket = storage.get(bucketName)
