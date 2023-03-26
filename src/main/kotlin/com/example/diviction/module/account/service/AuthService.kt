@@ -122,6 +122,7 @@ class AuthService(
         header.contentType = MediaType("application", "json", Charsets.UTF_8)
 
         try {
+            logger.info("Auto Login Refresh Token : " + autoLoginDto.refreshToken)
             if (!tokenProvider.validateToken(autoLoginDto.refreshToken) || !refreshTokenRepository.existsByTokenValue(
                     autoLoginDto.refreshToken
                 )
