@@ -13,7 +13,6 @@ class GcpStorageService(
         private val storage: Storage,
         @Value("\${spring.cloud.gcp.storage.bucket}")
         private val bucketName: String
-
 ) {
     fun uploadFileToGCS(imageFile: MultipartFile): String {
         val randUUID = UUID.randomUUID().toString()

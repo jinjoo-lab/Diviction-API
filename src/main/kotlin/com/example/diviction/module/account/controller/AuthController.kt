@@ -57,7 +57,7 @@ class AuthController(
     @Operation(description = "상담자 로그인 , 성공시 : 200 ok, 토큰  , 실패시 401 error")
     @PostMapping("signIn/counselor")
     fun signInCounselor(@RequestBody loginDto: LoginDto): TokenResult {
-        return authService.signInMember(loginDto.email, loginDto.password, loginDto.authority)
+        return authService.signInCounselor(loginDto.email, loginDto.password, loginDto.authority)
     }
 
     @Operation(description = "이메일 중복 체크 , url path 사용 : check/email/{email}/role/{role} , 결과 boolean")
